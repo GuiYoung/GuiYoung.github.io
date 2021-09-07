@@ -152,6 +152,89 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/07/socket%E4%B8%8E%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/07/socket%E4%B8%8E%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8/" class="post-title-link" itemprop="url">socket与让对象支持上下文管理器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-07 10:11:29 / Modified: 10:54:10" itemprop="dateCreated datePublished" datetime="2021-09-07T10:11:29+08:00">2021-09-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>[TOC]</p>
+<h1 id="套接字"><a href="#套接字" class="headerlink" title="套接字"></a>套接字</h1><p>Socket：对于网络通信而言，套接字是一个通用的网络编程接口，用于不同主机的进程之间来通信，每一个socket都可用网络地址结构（协议、本地地址、本地端口）来表示。</p>
+<p>分类：</p>
+<ul>
+<li>流式套接字(SOCK_STREAM)：提供面向连接、可靠的数据传输服务，数据无差错、无重复的发送且按发送顺序接收。内设置流量控制，避免数据流淹没慢的接收方。数据被看作是字节流，无长度限制。TCP通信使用的就是流式套接字。</li>
+<li>数据报套接字(SOCK_DGRAM)：提供无连接服务。数据包以独立数据包的形式被发送，不提供无差错保证，数据可能丢失或重复，顺序发送，可能乱序接收。UDP通信使用的就是数据报套接字。</li>
+<li>原始套接字(SOCK_RAW)：原始套接字允许对较低层次协议如IP、ICMP进行直接访问。它功能强大但使用较为不便，主要用于一些协议的开发。</li>
+</ul>
+<h1 id="python-Socket包"><a href="#python-Socket包" class="headerlink" title="python Socket包"></a>python Socket包</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wumingxiaoyao/p/7047658.html">参考</a></p>
+<p>这里着重介绍今天要用到的：</p>
+<ul>
+<li>socket.AF_INET：服务器之间网络通信</li>
+<li>socket.SOCK_STREAM：流式socket , for TCP</li>
+</ul>
+<p>由此，创建一个TCP Socket： s=socket.socket(family = socket.AF_INET,type = socket.SOCK_STREAM)</p>
+<p>客户端socket函数：</p>
+<p>s.connect(address)：连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</p>
+<h1 id="让对象支持上下文管理器"><a href="#让对象支持上下文管理器" class="headerlink" title="让对象支持上下文管理器"></a>让对象支持上下文管理器</h1><p>为了让对象支持上下文管理器，需要实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__enter__() 和 __exit__()两个方法</span><br></pre></td></tr></table></figure>
+
+<p>代码：</p>
+<p>这里注意观察注释掉的代码和新的代码的不同。注释掉的代码一次只允许创建一个socket连接，而新的代码允许同时存在多个socket连接。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#desc:class to create web connection</span></span><br><span class="line"><span class="comment">#data 2021/9/7</span></span><br><span class="line"><span class="comment">#lazy_connection.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> socket, AF_INET, SOCK_STREAM</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LazyConnection</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, address, family=AF_INET, <span class="built_in">type</span>=SOCK_STREAM</span>):</span></span><br><span class="line">        self.address = address</span><br><span class="line">        self.family = AF_INET</span><br><span class="line">        self.<span class="built_in">type</span> = SOCK_STREAM</span><br><span class="line">        <span class="comment">#self.sock = None</span></span><br><span class="line">        self.connections = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># if self.sock is not None:</span></span><br><span class="line">        <span class="comment">#     raise RuntimeError(&#x27;Already connected&#x27;)</span></span><br><span class="line">        <span class="comment"># self.sock = socket(self.family, self.type)</span></span><br><span class="line">        <span class="comment"># self.sock.connect(self.address)</span></span><br><span class="line">        <span class="comment"># return self.sock</span></span><br><span class="line">        sock = socket(self.family, self.<span class="built_in">type</span>)</span><br><span class="line">        sock.connect(self.address)</span><br><span class="line">        self.connections.append(sock)</span><br><span class="line">        <span class="keyword">return</span> sock</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exc_type, exc_val, exc_tb</span>):</span></span><br><span class="line">        <span class="comment"># self.sock.close()</span></span><br><span class="line">        <span class="comment"># self.sock = None</span></span><br><span class="line">        self.connections.pop().close()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#main.py</span></span><br><span class="line"><span class="keyword">import</span> lazy_connection</span><br><span class="line"></span><br><span class="line">connection = lazy_connection.LazyConnection(<span class="string">&#x27;https://www.baidu.com/&#x27;</span>,<span class="number">80</span>)</span><br><span class="line"><span class="keyword">with</span> connection <span class="keyword">as</span> conn1:</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">with</span> connection <span class="keyword">as</span> conn2:</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/05/flask-get%E8%8E%B7%E5%8F%96%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -510,7 +593,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
