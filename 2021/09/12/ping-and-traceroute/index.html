@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Pingping用于确定本机是否能与另一台主机交换数据包，根据返回的信息，推断TCP&#x2F;IP参数设置是否正确，以及运行是否正常、网络是否通畅。ping发送接收的消息是报文（IP报文）。 ping的过程：  源主机发送”请求回显“（ping请求） 目标主机返回”回显应答“（ping请求） 源主机通过”回显应答“类型报文中的内容来判断是否能够正常连接  IP报文： IP协议并不可靠，不保证数据能否被成功">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ping and traceroute">
+<meta property="og:url" content="http://example.com/2021/09/12/ping-and-traceroute/index.html">
+<meta property="og:site_name" content="Las Nubes">
+<meta property="og:description" content="Pingping用于确定本机是否能与另一台主机交换数据包，根据返回的信息，推断TCP&#x2F;IP参数设置是否正确，以及运行是否正常、网络是否通畅。ping发送接收的消息是报文（IP报文）。 ping的过程：  源主机发送”请求回显“（ping请求） 目标主机返回”回显应答“（ping请求） 源主机通过”回显应答“类型报文中的内容来判断是否能够正常连接  IP报文： IP协议并不可靠，不保证数据能否被成功">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185032171-662267624.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185437832-1468675305.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/5337919-d1900102224993c8.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1-15110ZSA3309.jpg">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1-15110ZT059560.jpg">
+<meta property="article:published_time" content="2021-09-12T06:47:03.000Z">
+<meta property="article:modified_time" content="2021-09-12T09:26:18.395Z">
+<meta property="article:author" content="GuiYoung">
+<meta property="article:tag" content="network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185032171-662267624.png">
+
+<link rel="canonical" href="http://example.com/2021/09/12/ping-and-traceroute/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>ping and traceroute | Las Nubes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Las Nubes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/12/ping-and-traceroute/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ping and traceroute
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-12 14:47:03 / Modified: 17:26:18" itemprop="dateCreated datePublished" datetime="2021-09-12T14:47:03+08:00">2021-09-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Ping"><a href="#Ping" class="headerlink" title="Ping"></a>Ping</h1><p>ping用于确定本机是否能与另一台主机交换数据包，根据返回的信息，推断TCP/IP参数设置是否正确，以及运行是否正常、网络是否通畅。ping发送接收的消息是报文（IP报文）。</p>
+<p>ping的过程：</p>
+<ul>
+<li>源主机发送”请求回显“（ping请求）</li>
+<li>目标主机返回”回显应答“（ping请求）</li>
+<li>源主机通过”回显应答“类型报文中的内容来判断是否能够正常连接</li>
+</ul>
+<p>IP报文：</p>
+<p>IP协议并不可靠，不保证数据能否被成功送达，由此引入ICMP（网络控制报文）协议。</p>
+<p>ICMP传递差错报文以及其它需要注意的信息，供IP层或更高层（TCP或UDP）使用。经常被认为是IP层的一部分。</p>
+<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185032171-662267624.png" alt="1931443-20200924185032171-662267624"></p>
+<p>ICMP报文类型有多种，根据type和code来判断ICMP报文类型。</p>
+<p>ICMP报文 = ICMP报头+Data（(ICMP_Packet = ICMPHeader + Data)）</p>
+<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185437832-1468675305.png" alt="1931443-20200924185437832-1468675305"></p>
+<ul>
+<li>type和code</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>TYPE</th>
+<th>CODE</th>
+<th>Description</th>
+<th>Query</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>Echo Reply——回显应答（Ping应答）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>0</td>
+<td>Network Unreachable——网络不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+<td>Host Unreachable——主机不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>Protocol Unreachable——协议不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>Port Unreachable——端口不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+<td>Fragmentation needed but no frag. bit set——需要进行分片但设置不分片比特</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>5</td>
+<td>Source routing failed——源站选路失败</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>6</td>
+<td>Destination network unknown——目的网络未知</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>7</td>
+<td>Destination host unknown——目的主机未知</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>8</td>
+<td>Source host isolated (obsolete)——源主机被隔离（作废不用）</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>9</td>
+<td>Destination network administratively prohibited——目的网络被强制禁止</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>10</td>
+<td>Destination host administratively prohibited——目的主机被强制禁止</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>11</td>
+<td>Network unreachable for TOS——由于服务类型TOS，网络不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>12</td>
+<td>Host unreachable for TOS——由于服务类型TOS，主机不可达</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>13</td>
+<td>Communication administratively prohibited by filtering——由于过滤，通信被强制禁止</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>14</td>
+<td>Host precedence violation——主机越权</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>3</td>
+<td>15</td>
+<td>Precedence cutoff in effect——优先中止生效</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0</td>
+<td>Source quench——源端被关闭（基本流控制）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>0</td>
+<td>Redirect for network——对网络重定向</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>1</td>
+<td>Redirect for host——对主机重定向</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>2</td>
+<td>Redirect for TOS and network——对服务类型和网络重定向</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>Redirect for TOS and host——对服务类型和主机重定向</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>0</td>
+<td>Echo request——回显请求（Ping请求）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>0</td>
+<td>Router advertisement——路由器通告</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>0</td>
+<td>Route solicitation——路由器请求</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>0</td>
+<td>TTL equals 0 during transit——传输期间生存时间为0</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>11</td>
+<td>1</td>
+<td>TTL equals 0 during reassembly——在数据报组装期间生存时间为0</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>12</td>
+<td>0</td>
+<td>IP header bad (catchall error)——坏的IP首部（包括各种差错）</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>12</td>
+<td>1</td>
+<td>Required options missing——缺少必需的选项</td>
+<td></td>
+<td>x</td>
+</tr>
+<tr>
+<td>13</td>
+<td>0</td>
+<td>Timestamp request (obsolete)——时间戳请求（作废不用）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td></td>
+<td>Timestamp reply (obsolete)——时间戳应答（作废不用）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td>0</td>
+<td>Information request (obsolete)——信息请求（作废不用）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>0</td>
+<td>Information reply (obsolete)——信息应答（作废不用）</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>0</td>
+<td>Address mask request——地址掩码请求</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>0</td>
+<td>Address mask reply——地址掩码应答</td>
+<td>x</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>checksum：用于检验数据包是否正确。</li>
+<li>ID：即每次运行可以Ping的程序都会获得一个进程ID，我们通过这个比较发送进程ID和回显应答中的ID，如果一样则说明是同一个Ping程序</li>
+<li>sequence：每发送一个信息就有一个sequence</li>
+<li>data：存放其它信息，如timeout</li>
+</ul>
+<h1 id="traceroute"><a href="#traceroute" class="headerlink" title="traceroute"></a>traceroute</h1><p>向目标主机发送消息并依据回答判断目标主机状态，同时遍历源主机和目标主机交互线路上的所有路由器并判断其状态，一般以30为最大TTL（time to live），每经过一台主机，TTL就减少一。每次遍历的前提：交互线路有不超过TTL-1数量的路由器。</p>
+<ul>
+<li><p>原理：</p>
+<p>源主机发送一份TTL字段为n的IP数据给某个主机，就可以得到该主机的IP地址，我们让TTL字段从1开始依次递增，就可以得到源主机与目标主机之间所有的路由器的IP地址。当一个路由器收到一个IP数据报，若其TTL为1，那么该数据报在网络空间中的生存周期已经结束，这时，若收到该数据报的主机不是目标主机，那么该主机就会返回一份ICMP超时报文（包含该主机IP地址）；若在TTL&gt;=1的情况下到达目标主机，目标主机就会返回一份ICMP应答报文。</p>
+<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\5337919-d1900102224993c8.png"></p>
+</li>
+<li><p>Timeout：</p>
+<p>设置该参数的意义在于应对发出消息后消息丢失一直不会返回的情况，避免因为消息没有返回而一直等待下去。</p>
+</li>
+<li><p>type和code</p>
+<p>根据ICMP报文的type和code判断该主机状态。</p>
+</li>
+<li><p>tries：</p>
+<p>消息发出后可能会意外不会返回，设定tries规定尝试的次数</p>
+</li>
+<li><p>DNS</p>
+<p>发包速度以ms为单位，很快；但通过DNS查询返回消息的主机信息以s为单位，不快。</p>
+</li>
+</ul>
+<h1 id="chekcsum"><a href="#chekcsum" class="headerlink" title="chekcsum"></a>chekcsum</h1><p>着重讲述一下checksum（检验和）：</p>
+<p>checksum是一个从数据包中通过特定计算方式而得出的值，通过检验这个值是否正确，来判断数据包完整性。在网络上传输时，数据包存在损坏的风险，接收端用checksum检验数据包是否损坏。源主机计算cheksum并将其作为字段设置在报文中，目标主机收到数据包再次计算checksum，并与数据包中已有的checksum进行交叉检验。</p>
+<p>计算cheksum的步骤：</p>
+<ul>
+<li>将cheksum设置为0</li>
+<li>每两个字节，后一个设为高位，前一个设为低位，相加。若和溢出（超过16位），取超出位与前16位相加。</li>
+<li>字节数若为奇，那么最后一定剩一个字节，将该字节与前面计算所得相加，若和溢出（超过16位），取超出位与前16位相加。。若为偶，不会剩字节。</li>
+<li>若还是溢出，继续取超出位与前16位相加。</li>
+<li>取反，得到一个十进制数</li>
+<li>主机字节序转为网络字节序（小端序转大端序）</li>
+</ul>
+<p>小端序转大端序：</p>
+<ul>
+<li>大端序（Big Endian）：高位字节存放到低位地址（高位字节在前）。</li>
+<li>小端序（Little Endian）：高位字节存放到高位地址（低位字节在前）。</li>
+</ul>
+<p>例子（0x12345678）：</p>
+<p>大端序：</p>
+<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZSA3309.jpg" alt="大端序"></p>
+<p>小端序：</p>
+<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZT059560.jpg"></p>
+<p>网路字节序统一为大端序。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/network/" rel="tag"># network</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/11/python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="prev" title="python socket">
+      <i class="fa fa-chevron-left"></i> python socket
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/15/java-%E5%9F%BA%E7%A1%80/" rel="next" title="java 基础">
+      java 基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ping"><span class="nav-number">1.</span> <span class="nav-text">Ping</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#traceroute"><span class="nav-number">2.</span> <span class="nav-text">traceroute</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#chekcsum"><span class="nav-number">3.</span> <span class="nav-text">chekcsum</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">GuiYoung</p>
+  <div class="site-description" itemprop="description">十有九人堪白眼，百无一用是书生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuiYoung</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
