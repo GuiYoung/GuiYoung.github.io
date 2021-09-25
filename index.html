@@ -152,6 +152,1256 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/24/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/24/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/" class="post-title-link" itemprop="url">数据结构之栈和队列</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-24 10:27:17 / Modified: 19:19:16" itemprop="dateCreated datePublished" datetime="2021-09-24T10:27:17+08:00">2021-09-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="栈的表示和实现"><a href="#栈的表示和实现" class="headerlink" title="栈的表示和实现"></a>栈的表示和实现</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;malloc.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERROR 0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_INIT_SIZE 5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LISTINCREMENT 5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Status;</span><br><span class="line"></span><br><span class="line"><span class="comment">//typedef struct&#123;</span></span><br><span class="line"><span class="comment">//    char name[8];</span></span><br><span class="line"><span class="comment">//    int age;</span></span><br><span class="line"><span class="comment">//&#125;ElemType;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ElemType *firstElem;</span><br><span class="line">    ElemType *lastElem;</span><br><span class="line">    <span class="keyword">int</span> stackSize;</span><br><span class="line">&#125;Stack;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">initStack</span><span class="params">(Stack &amp;s )</span></span>&#123;</span><br><span class="line">    s.firstElem = (ElemType*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span> (ElemType)*LIST_INIT_SIZE);</span><br><span class="line">    <span class="keyword">if</span>(!s.firstElem) <span class="keyword">return</span> ERROR;</span><br><span class="line">    s.lastElem = s.firstElem;</span><br><span class="line">    s.stackSize = LIST_INIT_SIZE;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">push</span><span class="params">(Stack &amp;s, ElemType e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(s.stackSize+<span class="number">1</span>&gt;LIST_INIT_SIZE)&#123;</span><br><span class="line">        s.firstElem = (ElemType*) <span class="built_in">realloc</span>(s.firstElem,<span class="keyword">sizeof</span> (ElemType)*(s.stackSize+LISTINCREMENT));</span><br><span class="line">        <span class="keyword">if</span>(!s.firstElem) <span class="keyword">return</span> ERROR;</span><br><span class="line">        s.stackSize += LISTINCREMENT;</span><br><span class="line">    &#125;</span><br><span class="line">    *(s.lastElem) = e;</span><br><span class="line">    s.lastElem++;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">pop</span><span class="params">(Stack &amp;s, ElemType &amp;e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(s.lastElem == s.firstElem)</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    e = *(s.lastElem<span class="number">-1</span>);</span><br><span class="line">    s.lastElem--;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Stack s;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(initStack(s)!=OK)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;init wrong&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">7</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(push(s,i)==OK) <span class="built_in">printf</span>(<span class="string">&quot;push Ok:%d&quot;</span>,i);</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;push wrong:%d&quot;</span>,i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ElemType e;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">7</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(pop(s,e)==OK) <span class="built_in">printf</span>(<span class="string">&quot;pop Ok:%d&quot;</span>,e);</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;pop error:%d&quot;</span>,i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="栈的应用"><a href="#栈的应用" class="headerlink" title="栈的应用"></a>栈的应用</h1><ul>
+<li><p>10进制数N转换成8进制的算法</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">converse</span><span class="params">(<span class="keyword">int</span> N)</span></span>&#123;</span><br><span class="line">    Stack S;</span><br><span class="line">    initStack(S);</span><br><span class="line">    <span class="keyword">while</span> (N)&#123;</span><br><span class="line">        push(S,N%<span class="number">8</span>);</span><br><span class="line">        N /= <span class="number">8</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(!isEmpty(S))&#123;</span><br><span class="line">        ElemType e;</span><br><span class="line">        push(S,e);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>,e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>括号匹配检验</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">isMatch</span><span class="params">(<span class="keyword">char</span> *<span class="built_in">string</span>)</span></span>&#123;</span><br><span class="line">    Stack s;</span><br><span class="line">    <span class="keyword">if</span>(!initStack(s)) <span class="keyword">return</span> ERROR;</span><br><span class="line"></span><br><span class="line">    ElemType e;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">char</span> *p=<span class="built_in">string</span>;*p;p++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(*p == <span class="string">&#x27;(&#x27;</span> || *p == <span class="string">&#x27;&#123;&#x27;</span> || *p == <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">            push(s,*p);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(*p == <span class="string">&#x27;)&#x27;</span> )&#123;</span><br><span class="line">            pop(s,e);</span><br><span class="line">            <span class="keyword">if</span>(e != <span class="string">&#x27;(&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> ERROR;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(*p == <span class="string">&#x27;]&#x27;</span> )&#123;</span><br><span class="line">            pop(s,e);</span><br><span class="line">            <span class="keyword">if</span>(e != <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> ERROR;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(*p == <span class="string">&#x27;&#123;&#x27;</span> )&#123;</span><br><span class="line">            pop(s,e);</span><br><span class="line">            <span class="keyword">if</span>(e != <span class="string">&#x27;&#125;&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> ERROR;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(isEmpty(s))</span><br><span class="line">        <span class="keyword">return</span> OK;</span><br><span class="line">    <span class="keyword">return</span> ERROR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="链队列"><a href="#链队列" class="headerlink" title="链队列"></a>链队列</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;malloc.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERROR 0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_INIT_SIZE 5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LISTINCREMENT 5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Status;</span><br><span class="line"></span><br><span class="line"><span class="comment">//typedef struct&#123;</span></span><br><span class="line"><span class="comment">//    char name[8];</span></span><br><span class="line"><span class="comment">//    int age;</span></span><br><span class="line"><span class="comment">//&#125;ElemType;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="comment">//结点类型</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">QNode</span>&#123;</span></span><br><span class="line">    ElemType data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">QNode</span> * <span class="title">next</span>;</span></span><br><span class="line">&#125;QNode,*Queue;</span><br><span class="line"></span><br><span class="line"><span class="comment">//链队列类型</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    Queue frontPtr;</span><br><span class="line">    Queue rearPtr;</span><br><span class="line">&#125;LinkQueue;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">initQueue</span><span class="params">(LinkQueue &amp;Q)</span></span>&#123;</span><br><span class="line">    Q.frontPtr  = (QNode*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span> (QNode));</span><br><span class="line">    Q.rearPtr = Q.frontPtr;</span><br><span class="line">    <span class="keyword">if</span>(!Q.frontPtr) <span class="keyword">return</span> ERROR;</span><br><span class="line">    Q.frontPtr-&gt;next == <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">EnQueue</span><span class="params">(LinkQueue &amp;Q,ElemType e)</span></span>&#123;</span><br><span class="line">    QNode *m = (QNode*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span> (QNode));</span><br><span class="line">    <span class="keyword">if</span>(!m) <span class="keyword">return</span> ERROR;</span><br><span class="line">    m-&gt;data = e;</span><br><span class="line">    m-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    Q.rearPtr-&gt;next = m;</span><br><span class="line">    Q.rearPtr = m;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">isEmpty</span><span class="params">(LinkQueue Q)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(Q.frontPtr == Q.rearPtr) <span class="keyword">return</span> ERROR;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">DeQueue</span><span class="params">(LinkQueue &amp;Q,ElemType &amp;e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(isEmpty(Q)) <span class="keyword">return</span> ERROR;</span><br><span class="line">    QNode *m = Q.frontPtr;</span><br><span class="line">    Q.frontPtr = Q.frontPtr-&gt;next;</span><br><span class="line">    e = m-&gt;data;</span><br><span class="line">    <span class="built_in">free</span>(m);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="顺序队列"><a href="#顺序队列" class="headerlink" title="顺序队列"></a>顺序队列</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;malloc.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERROR 0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_INIT_SIZE 5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LISTINCREMENT 5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Status;</span><br><span class="line"></span><br><span class="line"><span class="comment">//typedef struct&#123;</span></span><br><span class="line"><span class="comment">//    char name[8];</span></span><br><span class="line"><span class="comment">//    int age;</span></span><br><span class="line"><span class="comment">//&#125;ElemType;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXQSIZE 10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ElemType *base;</span><br><span class="line">    <span class="keyword">int</span> front;</span><br><span class="line">    <span class="keyword">int</span> rear;</span><br><span class="line">&#125;Queue;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">isFull</span><span class="params">(Queue &amp;Q)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>((Q.rear - Q.front + MAXQSIZE)%MAXQSIZE &lt; MAXQSIZE - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">initQueue</span><span class="params">(Queue &amp;Q)</span></span>&#123;</span><br><span class="line">    Q.base = (ElemType*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span> (ElemType)*MAXQSIZE);</span><br><span class="line">    <span class="keyword">if</span>(!Q.base) <span class="keyword">return</span> ERROR;</span><br><span class="line">    Q.front = Q.rear = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">enQueue</span><span class="params">(Queue &amp;Q,ElemType e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(isFull(Q)) <span class="keyword">return</span> ERROR;</span><br><span class="line">    Q.base[Q.rear] = e;</span><br><span class="line">    Q.rear = (++Q.rear)%MAXQSIZE;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">deQueue</span><span class="params">(Queue &amp;Q,ElemType &amp;e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(Q.rear == Q.front) <span class="keyword">return</span> ERROR;</span><br><span class="line">    e = Q.base[Q.front];</span><br><span class="line">    Q.front = (++Q.front)%MAXQSIZE;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="双端队列"><a href="#双端队列" class="headerlink" title="双端队列"></a>双端队列</h1><p>双端队列：双端队列是一种特殊的线性表，特殊在限定插入 和删除操作只能在表的两端进行。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%BF%E6%80%A7%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%BF%E6%80%A7%E8%A1%A8/" class="post-title-link" itemprop="url">数据结构之线性表</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-23 20:08:13" itemprop="dateCreated datePublished" datetime="2021-09-23T20:08:13+08:00">2021-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-24 19:18:34" itemprop="dateModified" datetime="2021-09-24T19:18:34+08:00">2021-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="线性表顺序表示和实现"><a href="#线性表顺序表示和实现" class="headerlink" title="线性表顺序表示和实现"></a>线性表顺序表示和实现</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;malloc.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_INIT_SIZE 80</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LIST_INCREMENT 10</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Status;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">8</span>];</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125;ElemType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ElemType *elem;</span><br><span class="line">    <span class="keyword">int</span> length; <span class="comment">//当前长度</span></span><br><span class="line">    <span class="keyword">int</span> listSize; <span class="comment">//当前分配的存储容量</span></span><br><span class="line">&#125;SqList;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">InitList_Sq</span><span class="params">( SqList *L )</span></span>&#123;</span><br><span class="line">    L-&gt;elem = (ElemType*)<span class="built_in">malloc</span>(LIST_INIT_SIZE*<span class="keyword">sizeof</span>(ElemType));</span><br><span class="line">    <span class="keyword">if</span>(!L-&gt;elem) _exit(<span class="number">0</span>);</span><br><span class="line">    L-&gt;length = <span class="number">0</span>;</span><br><span class="line">    L-&gt;listSize = LIST_INIT_SIZE;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">ListInsert_Sq</span><span class="params">(SqList *L,<span class="keyword">int</span> i,ElemType e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(i&lt;<span class="number">0</span> || i &gt; L-&gt;length+<span class="number">1</span> )</span><br><span class="line">        _exit(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(L-&gt;length+<span class="number">1</span>&gt;L-&gt;listSize)&#123;</span><br><span class="line">        L-&gt;elem = (ElemType*)<span class="built_in">realloc</span>(L-&gt;elem,LIST_INCREMENT*<span class="keyword">sizeof</span>(ElemType)+L-&gt;listSize*<span class="keyword">sizeof</span>(ElemType));</span><br><span class="line">        L-&gt;listSize += LIST_INCREMENT;</span><br><span class="line">        <span class="keyword">if</span>(!L-&gt;elem)</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    i -= <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line">    <span class="keyword">for</span>(j=L-&gt;length;j&gt;i<span class="number">-1</span>;j--)</span><br><span class="line">        L-&gt;elem[j] = L-&gt;elem[j<span class="number">-1</span>];</span><br><span class="line">    L-&gt;elem[j] = e;</span><br><span class="line">    L-&gt;length++;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">ListDelete_Sq</span><span class="params">(SqList *L,<span class="keyword">int</span> i,ElemType *e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line">    <span class="keyword">if</span>(i&lt;<span class="number">1</span> || i&gt;L-&gt;length)</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;i<span class="number">-1</span>;j++)</span><br><span class="line">        L-&gt;elem[j] = L-&gt;elem[j+<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    L-&gt;length--;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="顺序表的链式表示和实现"><a href="#顺序表的链式表示和实现" class="headerlink" title="顺序表的链式表示和实现"></a>顺序表的链式表示和实现</h1><p>头结点：在单链表上设置一个结点，它本身不存放数据，它的指针域指向第一个元素的地址。</p>
+<p>首元结点：    链表中第一个元素所在的节点，它是头节点后边的第一个节点。</p>
+<p>头指针：链表的头指针永远指向链表中第一个节点的位置，换句话说，如果链表有头节点，头指针指向头节点；否则，头指针指向首元节点。</p>
+<p>是实话，不一理解为啥一定要有头指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;malloc.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERROR 0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Status;</span><br><span class="line"></span><br><span class="line"><span class="comment">//typedef struct&#123;</span></span><br><span class="line"><span class="comment">//    char name[8];</span></span><br><span class="line"><span class="comment">//    int age;</span></span><br><span class="line"><span class="comment">//&#125;ElemType;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">LNode</span> &#123;</span></span><br><span class="line">    ElemType data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">LNode</span>* <span class="title">next</span>;</span></span><br><span class="line">&#125;LNode, * LinkList;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">InitList</span><span class="params">(LinkList&amp; L)</span> </span>&#123;</span><br><span class="line">    L = (LinkList)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(LNode));</span><br><span class="line">    <span class="keyword">if</span> (!L) <span class="keyword">return</span> ERROR;</span><br><span class="line">    L-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">InsertList</span><span class="params">(LinkList&amp; L, <span class="keyword">int</span> i, ElemType m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;</span><br><span class="line">    LNode* pre = L;</span><br><span class="line">    <span class="keyword">if</span> (i &lt; <span class="number">1</span>) <span class="keyword">return</span> ERROR;</span><br><span class="line">    <span class="keyword">while</span> (j++ &lt; i &amp;&amp; pre-&gt;next != <span class="literal">nullptr</span>)</span><br><span class="line">        pre = pre-&gt;next;</span><br><span class="line">    LNode* newLNode = (LNode*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span> (LNode));</span><br><span class="line">    newLNode-&gt;data = m;</span><br><span class="line">    newLNode-&gt;next = pre-&gt;next;</span><br><span class="line">    pre-&gt;next = newLNode;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Status <span class="title">FindInList</span><span class="params">(LinkList&amp; L, <span class="keyword">int</span> i, ElemType &amp;m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;</span><br><span class="line">    LNode* pre = L;</span><br><span class="line">    <span class="keyword">if</span> (i &lt; <span class="number">1</span>) <span class="keyword">return</span> ERROR;</span><br><span class="line">    <span class="keyword">while</span> (j++ &lt; i &amp;&amp; pre-&gt;next != <span class="literal">nullptr</span>)</span><br><span class="line">        pre = pre-&gt;next;</span><br><span class="line">    <span class="keyword">if</span> (j - <span class="number">1</span> != i || pre-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line"></span><br><span class="line">    m = pre-&gt;next-&gt;data;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    LinkList L = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (InitList(L) != OK) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;hhhhhh&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (InsertList(L, i,i) != OK) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;hhhhh:%d&quot;</span>, i);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;insert Ok:%d\n&quot;</span>,i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ElemType  m = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (FindInList(L, i, m) == OK) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%d %d\n&quot;</span>, i, m);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;find wrong:%d\n&quot;</span>,i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Ok&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="循环链表与双向链表"><a href="#循环链表与双向链表" class="headerlink" title="循环链表与双向链表"></a>循环链表与双向链表</h1><p>循环链表：单链表最后一个结点的指针域没有利用， 如果使其指向头指针（头结点），则首尾构成 一个循环，称作循环链表。</p>
+<p>优点：从表中任一结点出发均可找到表中其它结点。</p>
+<p>特点：在循环链表中多采用尾指针，指向表尾的指针称为是尾指针。采用头指针时，查找第一个结点容易，查找尾结 点不容易，如果采用尾指针，则查找第一个结点和最后 一个结点都容易。</p>
+<p>双向链表：    一个链表的每一个结点含有两个指针域：一个指针指向 其前驱结点，另一个指针指向其后继结点，这样的链表称为 双向链表。</p>
+<h1 id="小练习"><a href="#小练习" class="headerlink" title="小练习"></a>小练习</h1><ul>
+<li><p>设L为带头结点的单链表，编写算法从头到尾反向输出每个结点的值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">VersePrint</span><span class="params">(LinkList L)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(L-&gt;next == <span class="literal">NULL</span>)&#123;&#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        VersePrint(L-&gt;next);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,L-&gt;next-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%83%E4%B9%A02021-9-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%83%E4%B9%A02021-9-22/" class="post-title-link" itemprop="url">数据结构2021.9.22</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-22 21:10:49 / Modified: 21:57:49" itemprop="dateCreated datePublished" datetime="2021-09-22T21:10:49+08:00">2021-09-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="一，C语言网题目1003"><a href="#一，C语言网题目1003" class="headerlink" title="一，C语言网题目1003"></a>一，C语言网题目1003</h1><p>要将”China”译成密码，译码规律是：用原来字母后面的第4个字母代替原来的字母．</p>
+<p>例如，字母”A”后面第4个字母是”E”．”E”代替”A”。因此，”China”应译为”Glmre”。</p>
+<p>请编一程序，用赋初值的方法使cl、c2、c3、c4、c5五个变量的值分别为，’C’、’h’、’i’、’n’、’a’，经过运算，使c1、c2、c3、c4、c5分别变为’G’、’l’、’m’、’r’、’e’，并输出。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">char</span> c[<span class="number">6</span>];</span><br><span class="line">    gets(c);</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;c[i]!=<span class="string">&#x27;\0&#x27;</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(c[i] &lt; <span class="string">&#x27;a&#x27;</span> &amp;&amp; c[i] &gt; <span class="string">&#x27;A&#x27;</span> - <span class="number">1</span>)</span><br><span class="line">            c[i] = (c[i]+<span class="number">4</span>-<span class="string">&#x27;A&#x27;</span>)%<span class="number">26</span> + <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span>(c[i] &lt; <span class="string">&#x27;z&#x27;</span> + <span class="number">1</span> &amp;&amp; c[i] &gt; <span class="string">&#x27;Z&#x27;</span>)</span><br><span class="line">            c[i] = (c[i]+<span class="number">4</span>-<span class="string">&#x27;a&#x27;</span>)%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">puts</span>(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>知识点一：ASCII码</p>
+<table>
+<thead>
+<tr>
+<th align="left">二进制</th>
+<th align="left">十进制</th>
+<th align="left">十六进制</th>
+<th align="left">字符/缩写</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">00000000</td>
+<td align="left">0</td>
+<td align="left">00</td>
+<td align="left">NUL (NULL)</td>
+<td align="left">空字符</td>
+</tr>
+<tr>
+<td align="left">00000001</td>
+<td align="left">1</td>
+<td align="left">01</td>
+<td align="left">SOH (Start Of Headling)</td>
+<td align="left">标题开始</td>
+</tr>
+<tr>
+<td align="left">00000010</td>
+<td align="left">2</td>
+<td align="left">02</td>
+<td align="left">STX (Start Of Text)</td>
+<td align="left">正文开始</td>
+</tr>
+<tr>
+<td align="left">00000011</td>
+<td align="left">3</td>
+<td align="left">03</td>
+<td align="left">ETX (End Of Text)</td>
+<td align="left">正文结束</td>
+</tr>
+<tr>
+<td align="left">00000100</td>
+<td align="left">4</td>
+<td align="left">04</td>
+<td align="left">EOT (End Of Transmission)</td>
+<td align="left">传输结束</td>
+</tr>
+<tr>
+<td align="left">00000101</td>
+<td align="left">5</td>
+<td align="left">05</td>
+<td align="left">ENQ (Enquiry)</td>
+<td align="left">请求</td>
+</tr>
+<tr>
+<td align="left">00000110</td>
+<td align="left">6</td>
+<td align="left">06</td>
+<td align="left">ACK (Acknowledge)</td>
+<td align="left">回应/响应/收到通知</td>
+</tr>
+<tr>
+<td align="left">00000111</td>
+<td align="left">7</td>
+<td align="left">07</td>
+<td align="left">BEL (Bell)</td>
+<td align="left">响铃</td>
+</tr>
+<tr>
+<td align="left">00001000</td>
+<td align="left">8</td>
+<td align="left">08</td>
+<td align="left">BS (Backspace)</td>
+<td align="left">退格</td>
+</tr>
+<tr>
+<td align="left">00001001</td>
+<td align="left">9</td>
+<td align="left">09</td>
+<td align="left">HT (Horizontal Tab)</td>
+<td align="left">水平制表符</td>
+</tr>
+<tr>
+<td align="left">00001010</td>
+<td align="left">10</td>
+<td align="left">0A</td>
+<td align="left">LF/NL(Line Feed/New Line)</td>
+<td align="left">换行键</td>
+</tr>
+<tr>
+<td align="left">00001011</td>
+<td align="left">11</td>
+<td align="left">0B</td>
+<td align="left">VT (Vertical Tab)</td>
+<td align="left">垂直制表符</td>
+</tr>
+<tr>
+<td align="left">00001100</td>
+<td align="left">12</td>
+<td align="left">0C</td>
+<td align="left">FF/NP (Form Feed/New Page)</td>
+<td align="left">换页键</td>
+</tr>
+<tr>
+<td align="left">00001101</td>
+<td align="left">13</td>
+<td align="left">0D</td>
+<td align="left">CR (Carriage Return)</td>
+<td align="left">回车键</td>
+</tr>
+<tr>
+<td align="left">00001110</td>
+<td align="left">14</td>
+<td align="left">0E</td>
+<td align="left">SO (Shift Out)</td>
+<td align="left">不用切换</td>
+</tr>
+<tr>
+<td align="left">00001111</td>
+<td align="left">15</td>
+<td align="left">0F</td>
+<td align="left">SI (Shift In)</td>
+<td align="left">启用切换</td>
+</tr>
+<tr>
+<td align="left">00010000</td>
+<td align="left">16</td>
+<td align="left">10</td>
+<td align="left">DLE (Data Link Escape)</td>
+<td align="left">数据链路转义</td>
+</tr>
+<tr>
+<td align="left">00010001</td>
+<td align="left">17</td>
+<td align="left">11</td>
+<td align="left">DC1/XON (Device Control 1/Transmission On)</td>
+<td align="left">设备控制1/传输开始</td>
+</tr>
+<tr>
+<td align="left">00010010</td>
+<td align="left">18</td>
+<td align="left">12</td>
+<td align="left">DC2 (Device Control 2)</td>
+<td align="left">设备控制2</td>
+</tr>
+<tr>
+<td align="left">00010011</td>
+<td align="left">19</td>
+<td align="left">13</td>
+<td align="left">DC3/XOFF (Device Control 3/Transmission Off)</td>
+<td align="left">设备控制3/传输中断</td>
+</tr>
+<tr>
+<td align="left">00010100</td>
+<td align="left">20</td>
+<td align="left">14</td>
+<td align="left">DC4 (Device Control 4)</td>
+<td align="left">设备控制4</td>
+</tr>
+<tr>
+<td align="left">00010101</td>
+<td align="left">21</td>
+<td align="left">15</td>
+<td align="left">NAK (Negative Acknowledge)</td>
+<td align="left">无响应/非正常响应/拒绝接收</td>
+</tr>
+<tr>
+<td align="left">00010110</td>
+<td align="left">22</td>
+<td align="left">16</td>
+<td align="left">SYN (Synchronous Idle)</td>
+<td align="left">同步空闲</td>
+</tr>
+<tr>
+<td align="left">00010111</td>
+<td align="left">23</td>
+<td align="left">17</td>
+<td align="left">ETB (End of Transmission Block)</td>
+<td align="left">传输块结束/块传输终止</td>
+</tr>
+<tr>
+<td align="left">00011000</td>
+<td align="left">24</td>
+<td align="left">18</td>
+<td align="left">CAN (Cancel)</td>
+<td align="left">取消</td>
+</tr>
+<tr>
+<td align="left">00011001</td>
+<td align="left">25</td>
+<td align="left">19</td>
+<td align="left">EM (End of Medium)</td>
+<td align="left">已到介质末端/介质存储已满/介质中断</td>
+</tr>
+<tr>
+<td align="left">00011010</td>
+<td align="left">26</td>
+<td align="left">1A</td>
+<td align="left">SUB (Substitute)</td>
+<td align="left">替补/替换</td>
+</tr>
+<tr>
+<td align="left">00011011</td>
+<td align="left">27</td>
+<td align="left">1B</td>
+<td align="left">ESC (Escape)</td>
+<td align="left">逃离/取消</td>
+</tr>
+<tr>
+<td align="left">00011100</td>
+<td align="left">28</td>
+<td align="left">1C</td>
+<td align="left">FS (File Separator)</td>
+<td align="left">文件分割符</td>
+</tr>
+<tr>
+<td align="left">00011101</td>
+<td align="left">29</td>
+<td align="left">1D</td>
+<td align="left">GS (Group Separator)</td>
+<td align="left">组分隔符/分组符</td>
+</tr>
+<tr>
+<td align="left">00011110</td>
+<td align="left">30</td>
+<td align="left">1E</td>
+<td align="left">RS (Record Separator)</td>
+<td align="left">记录分离符</td>
+</tr>
+<tr>
+<td align="left">00011111</td>
+<td align="left">31</td>
+<td align="left">1F</td>
+<td align="left">US (Unit Separator)</td>
+<td align="left">单元分隔符</td>
+</tr>
+<tr>
+<td align="left">00100000</td>
+<td align="left">32</td>
+<td align="left">20</td>
+<td align="left">(Space)</td>
+<td align="left">空格</td>
+</tr>
+<tr>
+<td align="left">00100001</td>
+<td align="left">33</td>
+<td align="left">21</td>
+<td align="left">!</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100010</td>
+<td align="left">34</td>
+<td align="left">22</td>
+<td align="left">“</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100011</td>
+<td align="left">35</td>
+<td align="left">23</td>
+<td align="left">#</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100100</td>
+<td align="left">36</td>
+<td align="left">24</td>
+<td align="left">$</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100101</td>
+<td align="left">37</td>
+<td align="left">25</td>
+<td align="left">%</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100110</td>
+<td align="left">38</td>
+<td align="left">26</td>
+<td align="left">&amp;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100111</td>
+<td align="left">39</td>
+<td align="left">27</td>
+<td align="left">‘</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101000</td>
+<td align="left">40</td>
+<td align="left">28</td>
+<td align="left">(</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101001</td>
+<td align="left">41</td>
+<td align="left">29</td>
+<td align="left">)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101010</td>
+<td align="left">42</td>
+<td align="left">2A</td>
+<td align="left">*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101011</td>
+<td align="left">43</td>
+<td align="left">2B</td>
+<td align="left">+</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101100</td>
+<td align="left">44</td>
+<td align="left">2C</td>
+<td align="left">,</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101101</td>
+<td align="left">45</td>
+<td align="left">2D</td>
+<td align="left">-</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101110</td>
+<td align="left">46</td>
+<td align="left">2E</td>
+<td align="left">.</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101111</td>
+<td align="left">47</td>
+<td align="left">2F</td>
+<td align="left">/</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110000</td>
+<td align="left">48</td>
+<td align="left">30</td>
+<td align="left">0</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110001</td>
+<td align="left">49</td>
+<td align="left">31</td>
+<td align="left">1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110010</td>
+<td align="left">50</td>
+<td align="left">32</td>
+<td align="left">2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110011</td>
+<td align="left">51</td>
+<td align="left">33</td>
+<td align="left">3</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110100</td>
+<td align="left">52</td>
+<td align="left">34</td>
+<td align="left">4</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110101</td>
+<td align="left">53</td>
+<td align="left">35</td>
+<td align="left">5</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110110</td>
+<td align="left">54</td>
+<td align="left">36</td>
+<td align="left">6</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110111</td>
+<td align="left">55</td>
+<td align="left">37</td>
+<td align="left">7</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111000</td>
+<td align="left">56</td>
+<td align="left">38</td>
+<td align="left">8</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111001</td>
+<td align="left">57</td>
+<td align="left">39</td>
+<td align="left">9</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111010</td>
+<td align="left">58</td>
+<td align="left">3A</td>
+<td align="left">:</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111011</td>
+<td align="left">59</td>
+<td align="left">3B</td>
+<td align="left">;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111100</td>
+<td align="left">60</td>
+<td align="left">3C</td>
+<td align="left">&lt;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111101</td>
+<td align="left">61</td>
+<td align="left">3D</td>
+<td align="left">=</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111110</td>
+<td align="left">62</td>
+<td align="left">3E</td>
+<td align="left">&gt;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111111</td>
+<td align="left">63</td>
+<td align="left">3F</td>
+<td align="left">?</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000000</td>
+<td align="left">64</td>
+<td align="left">40</td>
+<td align="left">@</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000001</td>
+<td align="left">65</td>
+<td align="left">41</td>
+<td align="left">A</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000010</td>
+<td align="left">66</td>
+<td align="left">42</td>
+<td align="left">B</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000011</td>
+<td align="left">67</td>
+<td align="left">43</td>
+<td align="left">C</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000100</td>
+<td align="left">68</td>
+<td align="left">44</td>
+<td align="left">D</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000101</td>
+<td align="left">69</td>
+<td align="left">45</td>
+<td align="left">E</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000110</td>
+<td align="left">70</td>
+<td align="left">46</td>
+<td align="left">F</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000111</td>
+<td align="left">71</td>
+<td align="left">47</td>
+<td align="left">G</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001000</td>
+<td align="left">72</td>
+<td align="left">48</td>
+<td align="left">H</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001001</td>
+<td align="left">73</td>
+<td align="left">49</td>
+<td align="left">I</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001010</td>
+<td align="left">74</td>
+<td align="left">4A</td>
+<td align="left">J</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001011</td>
+<td align="left">75</td>
+<td align="left">4B</td>
+<td align="left">K</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001100</td>
+<td align="left">76</td>
+<td align="left">4C</td>
+<td align="left">L</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001101</td>
+<td align="left">77</td>
+<td align="left">4D</td>
+<td align="left">M</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001110</td>
+<td align="left">78</td>
+<td align="left">4E</td>
+<td align="left">N</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001111</td>
+<td align="left">79</td>
+<td align="left">4F</td>
+<td align="left">O</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010000</td>
+<td align="left">80</td>
+<td align="left">50</td>
+<td align="left">P</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010001</td>
+<td align="left">81</td>
+<td align="left">51</td>
+<td align="left">Q</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010010</td>
+<td align="left">82</td>
+<td align="left">52</td>
+<td align="left">R</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010011</td>
+<td align="left">83</td>
+<td align="left">53</td>
+<td align="left">S</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010100</td>
+<td align="left">84</td>
+<td align="left">54</td>
+<td align="left">T</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010101</td>
+<td align="left">85</td>
+<td align="left">55</td>
+<td align="left">U</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010110</td>
+<td align="left">86</td>
+<td align="left">56</td>
+<td align="left">V</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010111</td>
+<td align="left">87</td>
+<td align="left">57</td>
+<td align="left">W</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011000</td>
+<td align="left">88</td>
+<td align="left">58</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011001</td>
+<td align="left">89</td>
+<td align="left">59</td>
+<td align="left">Y</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011010</td>
+<td align="left">90</td>
+<td align="left">5A</td>
+<td align="left">Z</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011011</td>
+<td align="left">91</td>
+<td align="left">5B</td>
+<td align="left">[</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011100</td>
+<td align="left">92</td>
+<td align="left">5C</td>
+<td align="left">\</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011101</td>
+<td align="left">93</td>
+<td align="left">5D</td>
+<td align="left">]</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011110</td>
+<td align="left">94</td>
+<td align="left">5E</td>
+<td align="left">^</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011111</td>
+<td align="left">95</td>
+<td align="left">5F</td>
+<td align="left">_</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100000</td>
+<td align="left">96</td>
+<td align="left">60</td>
+<td align="left">`</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100001</td>
+<td align="left">97</td>
+<td align="left">61</td>
+<td align="left">a</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100010</td>
+<td align="left">98</td>
+<td align="left">62</td>
+<td align="left">b</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100011</td>
+<td align="left">99</td>
+<td align="left">63</td>
+<td align="left">c</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100100</td>
+<td align="left">100</td>
+<td align="left">64</td>
+<td align="left">d</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100101</td>
+<td align="left">101</td>
+<td align="left">65</td>
+<td align="left">e</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100110</td>
+<td align="left">102</td>
+<td align="left">66</td>
+<td align="left">f</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100111</td>
+<td align="left">103</td>
+<td align="left">67</td>
+<td align="left">g</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101000</td>
+<td align="left">104</td>
+<td align="left">68</td>
+<td align="left">h</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101001</td>
+<td align="left">105</td>
+<td align="left">69</td>
+<td align="left">i</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101010</td>
+<td align="left">106</td>
+<td align="left">6A</td>
+<td align="left">j</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101011</td>
+<td align="left">107</td>
+<td align="left">6B</td>
+<td align="left">k</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101100</td>
+<td align="left">108</td>
+<td align="left">6C</td>
+<td align="left">l</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101101</td>
+<td align="left">109</td>
+<td align="left">6D</td>
+<td align="left">m</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101110</td>
+<td align="left">110</td>
+<td align="left">6E</td>
+<td align="left">n</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101111</td>
+<td align="left">111</td>
+<td align="left">6F</td>
+<td align="left">o</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110000</td>
+<td align="left">112</td>
+<td align="left">70</td>
+<td align="left">p</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110001</td>
+<td align="left">113</td>
+<td align="left">71</td>
+<td align="left">q</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110010</td>
+<td align="left">114</td>
+<td align="left">72</td>
+<td align="left">r</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110011</td>
+<td align="left">115</td>
+<td align="left">73</td>
+<td align="left">s</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110100</td>
+<td align="left">116</td>
+<td align="left">74</td>
+<td align="left">t</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110101</td>
+<td align="left">117</td>
+<td align="left">75</td>
+<td align="left">u</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110110</td>
+<td align="left">118</td>
+<td align="left">76</td>
+<td align="left">v</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110111</td>
+<td align="left">119</td>
+<td align="left">77</td>
+<td align="left">w</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111000</td>
+<td align="left">120</td>
+<td align="left">78</td>
+<td align="left">x</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111001</td>
+<td align="left">121</td>
+<td align="left">79</td>
+<td align="left">y</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111010</td>
+<td align="left">122</td>
+<td align="left">7A</td>
+<td align="left">z</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111011</td>
+<td align="left">123</td>
+<td align="left">7B</td>
+<td align="left">{</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111100</td>
+<td align="left">124</td>
+<td align="left">7C</td>
+<td align="left">|</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111101</td>
+<td align="left">125</td>
+<td align="left">7D</td>
+<td align="left">}</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111110</td>
+<td align="left">126</td>
+<td align="left">7E</td>
+<td align="left">~</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111111</td>
+<td align="left">127</td>
+<td align="left">7F</td>
+<td align="left">DEL (Delete)</td>
+<td align="left">删除</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>知识点二：c中单引号和双引号的区别</p>
+<p>单引号中的字符是一个整数，对应ASCII表，而双引号不仅可以引单个字符，还可以引字符串。</p>
+</li>
+<li><p>python实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="built_in">input</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> s:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(c) <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>),<span class="built_in">ord</span>(<span class="string">&#x27;z&#x27;</span>)+<span class="number">1</span>):</span><br><span class="line">        c = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c)+<span class="number">4</span>-<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))%<span class="number">26</span>+<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))</span><br><span class="line">        <span class="built_in">print</span>(c,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(c) <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>),<span class="built_in">ord</span>(<span class="string">&#x27;Z&#x27;</span>)+<span class="number">1</span>):</span><br><span class="line">        c = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c)+<span class="number">4</span>-<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))%<span class="number">26</span>+<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))</span><br><span class="line">        <span class="built_in">print</span>(c,end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="二，杭电2000"><a href="#二，杭电2000" class="headerlink" title="二，杭电2000"></a>二，杭电2000</h1><p>输入三个字符后，按各字符的ASCII码从小到大的顺序输出这三个字符。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/17/go-python%EF%BC%881%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/17/go-python%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">go-python</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-17 20:23:09" itemprop="dateCreated datePublished" datetime="2021-09-17T20:23:09+08:00">2021-09-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/16/2021-9-16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/16/2021-9-16/" class="post-title-link" itemprop="url">2021-9-16</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-16 19:20:40 / Modified: 19:24:53" itemprop="dateCreated datePublished" datetime="2021-09-16T19:20:40+08:00">2021-09-16</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>痛苦的，偏激着。</p>
+<p>予我一颗狭隘且嫉妒的心，却不予我获得我所羡慕的事物的能力。</p>
+<p>每天都很痛苦。</p>
+<p>深陷于泥沼之中，却又无能为力。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/15/java-%E5%9F%BA%E7%A1%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -175,10 +1425,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-09-15 09:37:46 / Modified: 10:38:05" itemprop="dateCreated datePublished" datetime="2021-09-15T09:37:46+08:00">2021-09-15</time>
+              <time title="Created: 2021-09-15 09:37:46" itemprop="dateCreated datePublished" datetime="2021-09-15T09:37:46+08:00">2021-09-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-16 19:40:18" itemprop="dateModified" datetime="2021-09-16T19:40:18+08:00">2021-09-16</time>
+              </span>
 
           
 
@@ -195,11 +1451,11 @@
 
 
 
-<h1 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h1><p><img src="/2021/09/15/java-%E5%9F%BA%E7%A1%80/blog2\hexo\source_posts\java-基础\5c75f26776417299.jpg"></p>
+<h1 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h1><p><img src="/2021/09/15/java-%E5%9F%BA%E7%A1%80/java-%E5%9F%BA%E7%A1%80%5C5c75f26776417299.jpg"></p>
 <h1 id="Java与OOP有关的关键字"><a href="#Java与OOP有关的关键字" class="headerlink" title="Java与OOP有关的关键字"></a>Java与OOP有关的关键字</h1><ul>
 <li>限定访问权限修饰符：</li>
 </ul>
-<p><img src="/2021/09/15/java-%E5%9F%BA%E7%A1%80/blog2\hexo\source_posts\java-基础\024f78f0f736afc3d7954271b119ebc4b745120c.png"></p>
+<p><img src="/2021/09/15/java-%E5%9F%BA%E7%A1%80/java-%E5%9F%BA%E7%A1%80%5C024f78f0f736afc3d7954271b119ebc4b745120c.png"></p>
 <ul>
 <li><p>存储方式修饰符——static</p>
 <p>用途：方便在没有创建对象的情况下调用方法/变量。</p>
@@ -290,10 +1546,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-09-12 14:47:03 / Modified: 17:26:18" itemprop="dateCreated datePublished" datetime="2021-09-12T14:47:03+08:00">2021-09-12</time>
+              <time title="Created: 2021-09-12 14:47:03" itemprop="dateCreated datePublished" datetime="2021-09-12T14:47:03+08:00">2021-09-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-16 19:30:49" itemprop="dateModified" datetime="2021-09-16T19:30:49+08:00">2021-09-16</time>
+              </span>
 
           
 
@@ -316,10 +1578,10 @@
 <p>IP报文：</p>
 <p>IP协议并不可靠，不保证数据能否被成功送达，由此引入ICMP（网络控制报文）协议。</p>
 <p>ICMP传递差错报文以及其它需要注意的信息，供IP层或更高层（TCP或UDP）使用。经常被认为是IP层的一部分。</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185032171-662267624.png" alt="1931443-20200924185032171-662267624"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185032171-662267624.png" alt="1931443-20200924185032171-662267624"></p>
 <p>ICMP报文类型有多种，根据type和code来判断ICMP报文类型。</p>
 <p>ICMP报文 = ICMP报头+Data（(ICMP_Packet = ICMPHeader + Data)）</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185437832-1468675305.png" alt="1931443-20200924185437832-1468675305"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185437832-1468675305.png" alt="1931443-20200924185437832-1468675305"></p>
 <ul>
 <li>type和code</li>
 </ul>
@@ -589,7 +1851,7 @@
 <ul>
 <li><p>原理：</p>
 <p>源主机发送一份TTL字段为n的IP数据给某个主机，就可以得到该主机的IP地址，我们让TTL字段从1开始依次递增，就可以得到源主机与目标主机之间所有的路由器的IP地址。当一个路由器收到一个IP数据报，若其TTL为1，那么该数据报在网络空间中的生存周期已经结束，这时，若收到该数据报的主机不是目标主机，那么该主机就会返回一份ICMP超时报文（包含该主机IP地址）；若在TTL&gt;=1的情况下到达目标主机，目标主机就会返回一份ICMP应答报文。</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\5337919-d1900102224993c8.png"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C5337919-d1900102224993c8.png"></p>
 </li>
 <li><p>Timeout：</p>
 <p>设置该参数的意义在于应对发出消息后消息丢失一直不会返回的情况，避免因为消息没有返回而一直等待下去。</p>
@@ -622,9 +1884,9 @@
 </ul>
 <p>例子（0x12345678）：</p>
 <p>大端序：</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZSA3309.jpg" alt="大端序"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZSA3309.jpg" alt="大端序"></p>
 <p>小端序：</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZT059560.jpg"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZT059560.jpg"></p>
 <p>网路字节序统一为大端序。</p>
 
       
@@ -1151,506 +2413,11 @@ DISCARD #用于在事务提交/监视数据发生变化之前，可用该命令�
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/09/python%E6%8A%80%E5%B7%A7%EF%BC%882%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GuiYoung">
-      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Las Nubes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/09/python%E6%8A%80%E5%B7%A7%EF%BC%882%EF%BC%89/" class="post-title-link" itemprop="url">python技巧（2）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-09-09 09:03:52" itemprop="dateCreated datePublished" datetime="2021-09-09T09:03:52+08:00">2021-09-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-09-10 12:01:18" itemprop="dateModified" datetime="2021-09-10T12:01:18+08:00">2021-09-10</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[TOC]</p>
-<h1 id="如何在创建大量实列时节省内存"><a href="#如何在创建大量实列时节省内存" class="headerlink" title="如何在创建大量实列时节省内存"></a>如何在创建大量实列时节省内存</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#desp:如何在创建大量实例时节省内存</span></span><br><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#data:9/9/2021</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Date</span>:</span></span><br><span class="line">    __slots__ = [<span class="string">&#x27;year&#x27;</span>,<span class="string">&#x27;month&#x27;</span>,<span class="string">&#x27;day&#x27;</span>]</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,year=<span class="number">0</span>,month=<span class="number">0</span>,day=<span class="number">0</span></span>):</span></span><br><span class="line">        self.year = year</span><br><span class="line">        self.month = month</span><br><span class="line">        self.day = day</span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    date = Date(<span class="number">2021</span>,<span class="number">9</span>,<span class="number">9</span>)</span><br><span class="line">    <span class="built_in">print</span>(date.day)</span><br></pre></td></tr></table></figure>
-
-<p>这样做的好处：这样使用的Data类内存量相当于将数据保存在元组中，而创建一个Data字典则保存在字典中</p>
-<p>副作用：没办法再对实例添加任何新的属性，只允许使用__slots__中列出的属性名；此外，定义了__slots__属性的类不支持某些特定功能，如多重继承</p>
-<p>使用范围：仅在程序中呗当做数据结构而频繁使用的类中采用该技法</p>
-<h1 id="类中的下划线之辩"><a href="#类中的下划线之辩" class="headerlink" title="类中的下划线之辩"></a>类中的下划线之辩</h1><ul>
-<li>无下划线：一般变量</li>
-<li>前单下划线：这样命名变量表示不希望变量在类外访问，实际上，子类和对象都可以访问</li>
-<li>前置双下划线：子类也不可访问的变量</li>
-<li>后置下划线：用于命名变量时与关键字区别</li>
-</ul>
-<h1 id="isinstance函数"><a href="#isinstance函数" class="headerlink" title="isinstance函数"></a>isinstance函数</h1><p>用于判断一个对象是否是一种已知的类型</p>
-<ul>
-<li>isinstance()：考虑继承关系，会认为子类是一种父类类型</li>
-<li>type()：不考虑继承关系</li>
-</ul>
-<p>语法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">isinstance</span>(<span class="built_in">object</span>, classinfo)</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="创建可管理的属性"><a href="#创建可管理的属性" class="headerlink" title="创建可管理的属性"></a>创建可管理的属性</h1><p>在对实例的设置上，增加一些额外的处理过程（如类型检查或验证）</p>
-<p>一种方式：将其定义为property，把类中定义的函数当做一种属性来使用</p>
-<p>示例：类型检查或验证</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#desp:创建可管理的属性</span></span><br><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#data:9/9/2021</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,first_name,last_name=<span class="string">&quot;xixi&quot;</span></span>):</span></span><br><span class="line">        self.first_name = first_name</span><br><span class="line">        self.last_name = last_name</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Getter function</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">first_name</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self._first_name</span><br><span class="line">	</span><br><span class="line">    <span class="comment"># Repeated property code, but for a different name (bad!)</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">last_name</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self._last_name</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Setter function</span></span><br><span class="line"><span class="meta">    @first_name.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">first_name</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value,<span class="built_in">str</span>):</span><br><span class="line">            <span class="keyword">raise</span> TypeError(<span class="string">&quot;Expected a string&quot;</span>)</span><br><span class="line">        self._first_name = value</span><br><span class="line"></span><br><span class="line"><span class="meta">    @last_name.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">last_name</span>(<span class="params">self, value</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value,<span class="built_in">str</span>):</span><br><span class="line">            <span class="keyword">raise</span> TypeError(<span class="string">&quot;Expected a string&quot;</span>)</span><br><span class="line">        self._last_name = value</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Deleter function (optional)</span></span><br><span class="line"><span class="meta">    @first_name.deleter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">first_name</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">raise</span> AttributeError(<span class="string">&quot;Can&#x27;t delete attribute&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    person_1 = Person(<span class="string">&quot;Lily&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(person_1.first_name)  <span class="comment"># Calls the getter</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        person_1.last_name = <span class="number">1</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> error:</span><br><span class="line">        <span class="built_in">print</span>(error)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">del</span> person_1.first_name</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> error:</span><br><span class="line">        <span class="built_in">print</span>(error)</span><br></pre></td></tr></table></figure>
-
-<p>不要重复property语句，这会导致代码膨胀，丑陋。</p>
-<h1 id="创建一种新形式的类属性或实例属性"><a href="#创建一种新形式的类属性或实例属性" class="headerlink" title="创建一种新形式的类属性或实例属性"></a>创建一种新形式的类属性或实例属性</h1><p>作为上一节不建议重复property语句的解决方案</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#desp:创建可管理的属性</span></span><br><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#data:9/9/2021</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置一个描述符类来帮助实现类型检查的功能</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Integer</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,name</span>):</span></span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, instance, cls</span>):</span></span><br><span class="line">        <span class="keyword">if</span> instance <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> instance.__dict__[self.name]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, instance, value</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> TypeError(<span class="string">&#x27;Expected an int&#x27;</span>)</span><br><span class="line">        instance.__dict__[self.name] = value</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete__</span>(<span class="params">self, instance</span>):</span></span><br><span class="line">        <span class="keyword">del</span> instance.__dict__[self.name]</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span>:</span></span><br><span class="line">    <span class="comment">#注意，描述符只能在类的层次上定义</span></span><br><span class="line">    x = Integer(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">    y = Integer(<span class="string">&#x27;y&#x27;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,x,y</span>):</span></span><br><span class="line">        self.x = x</span><br><span class="line">        self.y = y</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    p = Point(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        p.x = <span class="number">2.3</span></span><br><span class="line">    <span class="keyword">except</span> TypeError <span class="keyword">as</span> error:</span><br><span class="line">        <span class="built_in">print</span>(error)</span><br></pre></td></tr></table></figure>
-
-<p>总结：若只是像访问某个特定的类中的一种属性，那么property会更简单；描述符适用于大量重用代码的情况，适合将其作为库使用。</p>
-<h1 id="调用父类中的方法"><a href="#调用父类中的方法" class="headerlink" title="调用父类中的方法"></a>调用父类中的方法</h1><p>super()方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#desp:创建可管理的属性</span></span><br><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#data:9/9/2021</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.x = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">spam</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;A.spam&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>(<span class="params">A</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.y = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">spam</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;B.spam&quot;</span>)</span><br><span class="line">        <span class="built_in">super</span>().spam()</span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/07/python%E6%8A%80%E5%B7%A7%EF%BC%881%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GuiYoung">
-      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Las Nubes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/07/python%E6%8A%80%E5%B7%A7%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">python技巧（1）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-09-07 10:11:29" itemprop="dateCreated datePublished" datetime="2021-09-07T10:11:29+08:00">2021-09-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-09-10 16:44:46" itemprop="dateModified" datetime="2021-09-10T16:44:46+08:00">2021-09-10</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[TOC]</p>
-<h1 id="套接字"><a href="#套接字" class="headerlink" title="套接字"></a>套接字</h1><p>Socket：对于网络通信而言，套接字是一个通用的网络编程接口，用于不同主机的进程之间来通信，每一个socket都可用网络地址结构（协议、本地地址、本地端口）来表示。</p>
-<p>分类：</p>
-<ul>
-<li>流式套接字(SOCK_STREAM)：提供面向连接、可靠的数据传输服务，数据无差错、无重复的发送且按发送顺序接收。内设置流量控制，避免数据流淹没慢的接收方。数据被看作是字节流，无长度限制。TCP通信使用的就是流式套接字。</li>
-<li>数据报套接字(SOCK_DGRAM)：提供无连接服务。数据包以独立数据包的形式被发送，不提供无差错保证，数据可能丢失或重复，顺序发送，可能乱序接收。UDP通信使用的就是数据报套接字。</li>
-<li>原始套接字(SOCK_RAW)：原始套接字允许对较低层次协议如IP、ICMP进行直接访问。它功能强大但使用较为不便，主要用于一些协议的开发。</li>
-</ul>
-<h1 id="python-Socket包"><a href="#python-Socket包" class="headerlink" title="python Socket包"></a>python Socket包</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wumingxiaoyao/p/7047658.html">参考</a></p>
-<p>这里着重介绍今天要用到的：</p>
-<ul>
-<li>socket.AF_INET：服务器之间网络通信</li>
-<li>socket.SOCK_STREAM：流式socket , for TCP</li>
-</ul>
-<p>由此，创建一个TCP Socket： s=socket.socket(family = socket.AF_INET,type = socket.SOCK_STREAM)</p>
-<p>客户端socket函数：</p>
-<p>s.connect(address)：连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</p>
-<h1 id="让对象支持上下文管理器"><a href="#让对象支持上下文管理器" class="headerlink" title="让对象支持上下文管理器"></a>让对象支持上下文管理器</h1><p>为了让对象支持上下文管理器，需要实现</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__enter__() 和 __exit__()两个方法</span><br></pre></td></tr></table></figure>
-
-<p>代码：</p>
-<p>这里注意观察注释掉的代码和新的代码的不同。注释掉的代码一次只允许创建一个socket连接，而新的代码允许同时存在多个socket连接。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#author:GuiYoung</span></span><br><span class="line"><span class="comment">#desc:class to create web connection</span></span><br><span class="line"><span class="comment">#data 2021/9/7</span></span><br><span class="line"><span class="comment">#lazy_connection.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> socket, AF_INET, SOCK_STREAM</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LazyConnection</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, address, family=AF_INET, <span class="built_in">type</span>=SOCK_STREAM</span>):</span></span><br><span class="line">        self.address = address</span><br><span class="line">        self.family = AF_INET</span><br><span class="line">        self.<span class="built_in">type</span> = SOCK_STREAM</span><br><span class="line">        <span class="comment">#self.sock = None</span></span><br><span class="line">        self.connections = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># if self.sock is not None:</span></span><br><span class="line">        <span class="comment">#     raise RuntimeError(&#x27;Already connected&#x27;)</span></span><br><span class="line">        <span class="comment"># self.sock = socket(self.family, self.type)</span></span><br><span class="line">        <span class="comment"># self.sock.connect(self.address)</span></span><br><span class="line">        <span class="comment"># return self.sock</span></span><br><span class="line">        sock = socket(self.family, self.<span class="built_in">type</span>)</span><br><span class="line">        sock.connect(self.address)</span><br><span class="line">        self.connections.append(sock)</span><br><span class="line">        <span class="keyword">return</span> sock</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exc_type, exc_val, exc_tb</span>):</span></span><br><span class="line">        <span class="comment"># self.sock.close()</span></span><br><span class="line">        <span class="comment"># self.sock = None</span></span><br><span class="line">        self.connections.pop().close()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#main.py</span></span><br><span class="line"><span class="keyword">import</span> lazy_connection</span><br><span class="line"></span><br><span class="line">connection = lazy_connection.LazyConnection(<span class="string">&#x27;https://www.baidu.com/&#x27;</span>,<span class="number">80</span>)</span><br><span class="line"><span class="keyword">with</span> connection <span class="keyword">as</span> conn1:</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">with</span> connection <span class="keyword">as</span> conn2:</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/05/flask-get%E8%8E%B7%E5%8F%96%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GuiYoung">
-      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Las Nubes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/05/flask-get%E8%8E%B7%E5%8F%96%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE/" class="post-title-link" itemprop="url">flask获取表单数据</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-09-05 09:52:16" itemprop="dateCreated datePublished" datetime="2021-09-05T09:52:16+08:00">2021-09-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-09-10 12:00:53" itemprop="dateModified" datetime="2021-09-10T12:00:53+08:00">2021-09-10</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[TOC]</p>
-<p>当用户提交表单后，在flask中可以使用request获取用户提交的表单。</p>
-<p>接下来详解几个函数。</p>
-<h1 id="reuqest-method"><a href="#reuqest-method" class="headerlink" title="reuqest.method"></a>reuqest.method</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.method <span class="comment">#返回前端提交的方式，比如GET，POST等</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="reuqest-form"><a href="#reuqest-form" class="headerlink" title="reuqest.form"></a>reuqest.form</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">request.form <span class="comment">#返回form表单中传来的值，类型：ImmutableMultiDict</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#可以使用字典的方法来操作</span></span><br><span class="line"><span class="comment">#这里补充一下python字典的操作</span></span><br><span class="line"><span class="built_in">dict</span>.get(key, value)<span class="comment">#可以返回第二个参数作为默认值</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="reuqest-args"><a href="#reuqest-args" class="headerlink" title="reuqest.args"></a>reuqest.args</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">reuqest.args <span class="comment">#其中保存的是URL中的参数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#例如：localhost:5000/req?name=Lily&amp;age=18</span></span><br><span class="line">对于：</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> request</span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/req&quot;</span>, methods=[<span class="string">&quot;POST&quot;</span>, <span class="string">&quot;GET&quot;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">req</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(request.args)<span class="comment">#输出ImmutableMultiDict([(&#x27;name&#x27;, &#x27;Lily&#x27;), (&#x27;age&#x27;, &#x27;18&#x27;)])，依然可以使用对字典的操作</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>request.form与request.args的区别在于：前者保存表单中的参数，后者保存URL中的参数</p>
-<h1 id="request-values"><a href="#request-values" class="headerlink" title="request.values"></a>request.values</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">request.values <span class="comment">#同时保存表单与URL中的参数</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(request.values) </span><br><span class="line"><span class="comment"># CombinedMultiDict([ImmutableMultiDict([(&#x27;id&#x27;, &#x27;1&#x27;), (&#x27;age&#x27;, &#x27;20&#x27;)]), ImmutableMultiDict([(&#x27;user&#x27;, &#x27;Oldboy&#x27;), (&#x27;pwd&#x27;, &#x27;DragonFire&#x27;)])])</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(request.values.get(<span class="string">&quot;id&quot;</span>))  <span class="comment"># 1</span></span><br><span class="line"><span class="built_in">print</span>(request.values[<span class="string">&quot;user&quot;</span>])  <span class="comment"># Oldboy</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#直接转为字典形式</span></span><br><span class="line"><span class="built_in">print</span>(request.values.to_dict()) <span class="comment"># &#123;&#x27;user&#x27;: &#x27;Oldboy&#x27;, &#x27;pwd&#x27;: &#x27;DragonFire&#x27;, &#x27;id&#x27;: &#x27;1&#x27;, &#x27;age&#x27;: &#x27;20&#x27;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果url和form中的Key重名的话,form中的同名的key中value会被url中的value覆盖</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="request-coolies和request-headers"><a href="#request-coolies和request-headers" class="headerlink" title="request.coolies和request.headers"></a>request.coolies和request.headers</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">request.cookies <span class="comment">#不多BB</span></span><br><span class="line">request.headers</span><br></pre></td></tr></table></figure>
-
-<h1 id="request-data"><a href="#request-data" class="headerlink" title="request.data"></a>request.data</h1><p>首先补充一个知识点：</p>
-<p>reuqest是基于MIME处理的</p>
-<p>MIME（<em>M</em>ultipurpose <em>I</em>nternet <em>M</em>ail <em>E</em>xtensions）：描述消息内容类型的因特网标准。</p>
-<p>若不属于MIME的范畴，那么request就会将无法处理的参数转为json存入data中</p>
-<p>一个获取参数的办法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">req_data = json.loads(request.data)</span><br></pre></td></tr></table></figure>
-
-<h1 id="request-files"><a href="#request-files" class="headerlink" title="request.files"></a>request.files</h1><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/req&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(request.files)  <span class="comment"># ImmutableMultiDict([(&#x27;file&#x27;, &lt;FileStorage: &#x27;DragonFire.txt&#x27; (&#x27;text/plain&#x27;)&gt;)])</span></span><br><span class="line"><span class="built_in">print</span>(request.files[<span class="string">&quot;file&quot;</span>])  <span class="comment"># &lt;FileStorage: &#x27;DragonFire.txt&#x27; (&#x27;text/plain&#x27;)&gt;</span></span><br><span class="line">my_file = request.files[<span class="string">&quot;file&quot;</span>]</span><br><span class="line">my_file.save(<span class="string">&quot;OldBoyEDU.txt&quot;</span>)  <span class="comment"># 保存文件,里面可以写完整路径+文件名</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/26/html%EF%BC%881%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GuiYoung">
-      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Las Nubes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/26/html%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">html（1）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-08-26 12:21:58" itemprop="dateCreated datePublished" datetime="2021-08-26T12:21:58+08:00">2021-08-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-09-10 12:01:03" itemprop="dateModified" datetime="2021-09-10T12:01:03+08:00">2021-09-10</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[TOC]</p>
-<h1 id="一，基础知识"><a href="#一，基础知识" class="headerlink" title="一，基础知识"></a>一，基础知识</h1><h2 id="1，html标签"><a href="#1，html标签" class="headerlink" title="1，html标签"></a>1，html标签</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--标题--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>This is heading 1<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--段落--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>请仅仅把标题标签用于标题文本。不要仅仅为了产生粗体文本而使用它们。请使用其它标签或 CSS 代替。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--链接--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.w3school.com.cn&quot;</span>&gt;</span>This is a link<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--水平线--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span> /&gt;</span>    </span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--图片--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;w3school.jpg&quot;</span> <span class="attr">width</span>=<span class="string">&quot;104&quot;</span> <span class="attr">height</span>=<span class="string">&quot;142&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="2，html元素"><a href="#2，html元素" class="headerlink" title="2，html元素"></a>2，html元素</h2><table>
-<thead>
-<tr>
-<th>开始标签</th>
-<th>元素内容</th>
-<th>结束内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>&lt;p&gt;</td>
-<td>This is a paragraph</td>
-<td>&lt;/p&gt;</td>
-</tr>
-<tr>
-<td>&lt;a href=”default.htm” &gt;</td>
-<td>This is a link</td>
-<td>&lt;/a&gt;</td>
-</tr>
-<tr>
-<td>&lt;br /&gt;(定义换行)</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>特点：</p>
-<ul>
-<li>元素始于开始标签，终于结束标签</li>
-<li>元素可以具有空内容</li>
-<li>空元素以开始标签的结束而结束</li>
-<li>大多数html元素可具有属性</li>
-<li>&lt;p&gt; 元素定义了 HTML 文档中的一个段落</li>
-<li>&lt;body&gt; 元素定义了 HTML 文档的主体</li>
-<li>&lt;html&gt; 元素定义了整个 HTML 文档</li>
-</ul>
-<h2 id="3，html属性"><a href="#3，html属性" class="headerlink" title="3，html属性"></a>3，html属性</h2><p>特点：</p>
-<ul>
-<li>以键值对形式出现</li>
-<li>总是在开始标签中规定</li>
-<li>始终为属性值加引号</li>
-</ul>
-<p>例子：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.w3school.com.cn&quot;</span>&gt;</span>This is a link<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，href属性用于指定链接</p>
-<h2 id="4，html标题"><a href="#4，html标题" class="headerlink" title="4，html标题"></a>4，html标题</h2><ul>
-<li>标题通过&lt;h1&gt;到&lt;h6&gt;等标签定义</li>
-<li>其中&lt;h1&gt;定义最大标题，&lt;h6&gt;定义最小标题</li>
-</ul>
-<h1 id="二，表单"><a href="#二，表单" class="headerlink" title="二，表单"></a>二，表单</h1><h2 id="1，表单"><a href="#1，表单" class="headerlink" title="1，表单"></a>1，表单</h2><ul>
-<li><p>表单用于收集用户输入</p>
-</li>
-<li><p>包含input元素、复选框、单选按钮、提交按钮等。</p>
-</li>
-<li><p>提交表单时，默认为GET方法</p>
-</li>
-</ul>
-<h2 id="2，-lt-input-gt-元素"><a href="#2，-lt-input-gt-元素" class="headerlink" title="2，&lt;input&gt;元素"></a>2，&lt;input&gt;元素</h2><ul>
-<li>&lt;input&gt;元素根据不同type属性分为不同的形态</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>text</td>
-<td>定义常规文本输入</td>
-</tr>
-<tr>
-<td>radio</td>
-<td>定义单选按钮输入</td>
-</tr>
-<tr>
-<td>submit</td>
-<td>提交表单</td>
-</tr>
-</tbody></table>
-<p>示例：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">fieldset</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">legend</span>&gt;</span>Personal information:<span class="tag">&lt;/<span class="name">legend</span>&gt;</span></span><br><span class="line">First name:<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;firstname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Mickey&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">Last name:<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;lastname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Mouse&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;male&quot;</span> <span class="attr">checked</span>&gt;</span>Male</span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;radio&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">value</span>=<span class="string">&quot;female&quot;</span>&gt;</span>Female</span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldset</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>若想要正确的提交，每个输入字段必须设置一个name属性</li>
-<li>&lt;fieldset&gt;元素组合表单中相关数据</li>
-<li>&lt;legend&gt;元素为&lt;fieldset&gt;指定标题</li>
-</ul>
-<h3 id="①InputType：checkbox"><a href="#①InputType：checkbox" class="headerlink" title="①InputType：checkbox"></a>①InputType：checkbox</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;checkbox&quot;</span> <span class="attr">name</span>=<span class="string">&quot;vehicle&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Bike&quot;</span>&gt;</span>I have a bike</span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;checkbox&quot;</span> <span class="attr">name</span>=<span class="string">&quot;vehicle&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Car&quot;</span>&gt;</span>I have a car </span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="②InputType：url"><a href="#②InputType：url" class="headerlink" title="②InputType：url"></a>②InputType：url</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">  Add your homepage:</span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;url&quot;</span> <span class="attr">name</span>=<span class="string">&quot;homepage&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/25/%E5%A7%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GuiYoung">
-      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Las Nubes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/25/%E5%A7%8B/" class="post-title-link" itemprop="url">丙申月 乙巳日</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-08-25 20:08:14 / Modified: 20:48:22" itemprop="dateCreated datePublished" datetime="2021-08-25T20:08:14+08:00">2021-08-25</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>十有九人堪白眼，百无一用是书生</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
 
 
 
@@ -1715,14 +2482,14 @@ DISCARD #用于在事务提交/监视数据发生变化之前，可用该命令�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

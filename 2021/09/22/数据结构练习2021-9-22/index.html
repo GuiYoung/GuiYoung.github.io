@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一，C语言网题目1003要将”China”译成密码，译码规律是：用原来字母后面的第4个字母代替原来的字母． 例如，字母”A”后面第4个字母是”E”．”E”代替”A”。因此，”China”应译为”Glmre”。 请编一程序，用赋初值的方法使cl、c2、c3、c4、c5五个变量的值分别为，’C’、’h’、’i’、’n’、’a’，经过运算，使c1、c2、c3、c4、c5分别变为’G’、’l’、’m’、’">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构2021.9.22">
+<meta property="og:url" content="http://example.com/2021/09/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%83%E4%B9%A02021-9-22/index.html">
+<meta property="og:site_name" content="Las Nubes">
+<meta property="og:description" content="一，C语言网题目1003要将”China”译成密码，译码规律是：用原来字母后面的第4个字母代替原来的字母． 例如，字母”A”后面第4个字母是”E”．”E”代替”A”。因此，”China”应译为”Glmre”。 请编一程序，用赋初值的方法使cl、c2、c3、c4、c5五个变量的值分别为，’C’、’h’、’i’、’n’、’a’，经过运算，使c1、c2、c3、c4、c5分别变为’G’、’l’、’m’、’">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-09-22T13:10:49.000Z">
+<meta property="article:modified_time" content="2021-09-22T13:57:49.910Z">
+<meta property="article:author" content="GuiYoung">
+<meta property="article:tag" content="数据结构与算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/09/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%83%E4%B9%A02021-9-22/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>数据结构2021.9.22 | Las Nubes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Las Nubes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%BB%83%E4%B9%A02021-9-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构2021.9.22
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-22 21:10:49 / Modified: 21:57:49" itemprop="dateCreated datePublished" datetime="2021-09-22T21:10:49+08:00">2021-09-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一，C语言网题目1003"><a href="#一，C语言网题目1003" class="headerlink" title="一，C语言网题目1003"></a>一，C语言网题目1003</h1><p>要将”China”译成密码，译码规律是：用原来字母后面的第4个字母代替原来的字母．</p>
+<p>例如，字母”A”后面第4个字母是”E”．”E”代替”A”。因此，”China”应译为”Glmre”。</p>
+<p>请编一程序，用赋初值的方法使cl、c2、c3、c4、c5五个变量的值分别为，’C’、’h’、’i’、’n’、’a’，经过运算，使c1、c2、c3、c4、c5分别变为’G’、’l’、’m’、’r’、’e’，并输出。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">char</span> c[<span class="number">6</span>];</span><br><span class="line">    gets(c);</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;c[i]!=<span class="string">&#x27;\0&#x27;</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(c[i] &lt; <span class="string">&#x27;a&#x27;</span> &amp;&amp; c[i] &gt; <span class="string">&#x27;A&#x27;</span> - <span class="number">1</span>)</span><br><span class="line">            c[i] = (c[i]+<span class="number">4</span>-<span class="string">&#x27;A&#x27;</span>)%<span class="number">26</span> + <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span>(c[i] &lt; <span class="string">&#x27;z&#x27;</span> + <span class="number">1</span> &amp;&amp; c[i] &gt; <span class="string">&#x27;Z&#x27;</span>)</span><br><span class="line">            c[i] = (c[i]+<span class="number">4</span>-<span class="string">&#x27;a&#x27;</span>)%<span class="number">26</span> + <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">puts</span>(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>知识点一：ASCII码</p>
+<table>
+<thead>
+<tr>
+<th align="left">二进制</th>
+<th align="left">十进制</th>
+<th align="left">十六进制</th>
+<th align="left">字符/缩写</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">00000000</td>
+<td align="left">0</td>
+<td align="left">00</td>
+<td align="left">NUL (NULL)</td>
+<td align="left">空字符</td>
+</tr>
+<tr>
+<td align="left">00000001</td>
+<td align="left">1</td>
+<td align="left">01</td>
+<td align="left">SOH (Start Of Headling)</td>
+<td align="left">标题开始</td>
+</tr>
+<tr>
+<td align="left">00000010</td>
+<td align="left">2</td>
+<td align="left">02</td>
+<td align="left">STX (Start Of Text)</td>
+<td align="left">正文开始</td>
+</tr>
+<tr>
+<td align="left">00000011</td>
+<td align="left">3</td>
+<td align="left">03</td>
+<td align="left">ETX (End Of Text)</td>
+<td align="left">正文结束</td>
+</tr>
+<tr>
+<td align="left">00000100</td>
+<td align="left">4</td>
+<td align="left">04</td>
+<td align="left">EOT (End Of Transmission)</td>
+<td align="left">传输结束</td>
+</tr>
+<tr>
+<td align="left">00000101</td>
+<td align="left">5</td>
+<td align="left">05</td>
+<td align="left">ENQ (Enquiry)</td>
+<td align="left">请求</td>
+</tr>
+<tr>
+<td align="left">00000110</td>
+<td align="left">6</td>
+<td align="left">06</td>
+<td align="left">ACK (Acknowledge)</td>
+<td align="left">回应/响应/收到通知</td>
+</tr>
+<tr>
+<td align="left">00000111</td>
+<td align="left">7</td>
+<td align="left">07</td>
+<td align="left">BEL (Bell)</td>
+<td align="left">响铃</td>
+</tr>
+<tr>
+<td align="left">00001000</td>
+<td align="left">8</td>
+<td align="left">08</td>
+<td align="left">BS (Backspace)</td>
+<td align="left">退格</td>
+</tr>
+<tr>
+<td align="left">00001001</td>
+<td align="left">9</td>
+<td align="left">09</td>
+<td align="left">HT (Horizontal Tab)</td>
+<td align="left">水平制表符</td>
+</tr>
+<tr>
+<td align="left">00001010</td>
+<td align="left">10</td>
+<td align="left">0A</td>
+<td align="left">LF/NL(Line Feed/New Line)</td>
+<td align="left">换行键</td>
+</tr>
+<tr>
+<td align="left">00001011</td>
+<td align="left">11</td>
+<td align="left">0B</td>
+<td align="left">VT (Vertical Tab)</td>
+<td align="left">垂直制表符</td>
+</tr>
+<tr>
+<td align="left">00001100</td>
+<td align="left">12</td>
+<td align="left">0C</td>
+<td align="left">FF/NP (Form Feed/New Page)</td>
+<td align="left">换页键</td>
+</tr>
+<tr>
+<td align="left">00001101</td>
+<td align="left">13</td>
+<td align="left">0D</td>
+<td align="left">CR (Carriage Return)</td>
+<td align="left">回车键</td>
+</tr>
+<tr>
+<td align="left">00001110</td>
+<td align="left">14</td>
+<td align="left">0E</td>
+<td align="left">SO (Shift Out)</td>
+<td align="left">不用切换</td>
+</tr>
+<tr>
+<td align="left">00001111</td>
+<td align="left">15</td>
+<td align="left">0F</td>
+<td align="left">SI (Shift In)</td>
+<td align="left">启用切换</td>
+</tr>
+<tr>
+<td align="left">00010000</td>
+<td align="left">16</td>
+<td align="left">10</td>
+<td align="left">DLE (Data Link Escape)</td>
+<td align="left">数据链路转义</td>
+</tr>
+<tr>
+<td align="left">00010001</td>
+<td align="left">17</td>
+<td align="left">11</td>
+<td align="left">DC1/XON (Device Control 1/Transmission On)</td>
+<td align="left">设备控制1/传输开始</td>
+</tr>
+<tr>
+<td align="left">00010010</td>
+<td align="left">18</td>
+<td align="left">12</td>
+<td align="left">DC2 (Device Control 2)</td>
+<td align="left">设备控制2</td>
+</tr>
+<tr>
+<td align="left">00010011</td>
+<td align="left">19</td>
+<td align="left">13</td>
+<td align="left">DC3/XOFF (Device Control 3/Transmission Off)</td>
+<td align="left">设备控制3/传输中断</td>
+</tr>
+<tr>
+<td align="left">00010100</td>
+<td align="left">20</td>
+<td align="left">14</td>
+<td align="left">DC4 (Device Control 4)</td>
+<td align="left">设备控制4</td>
+</tr>
+<tr>
+<td align="left">00010101</td>
+<td align="left">21</td>
+<td align="left">15</td>
+<td align="left">NAK (Negative Acknowledge)</td>
+<td align="left">无响应/非正常响应/拒绝接收</td>
+</tr>
+<tr>
+<td align="left">00010110</td>
+<td align="left">22</td>
+<td align="left">16</td>
+<td align="left">SYN (Synchronous Idle)</td>
+<td align="left">同步空闲</td>
+</tr>
+<tr>
+<td align="left">00010111</td>
+<td align="left">23</td>
+<td align="left">17</td>
+<td align="left">ETB (End of Transmission Block)</td>
+<td align="left">传输块结束/块传输终止</td>
+</tr>
+<tr>
+<td align="left">00011000</td>
+<td align="left">24</td>
+<td align="left">18</td>
+<td align="left">CAN (Cancel)</td>
+<td align="left">取消</td>
+</tr>
+<tr>
+<td align="left">00011001</td>
+<td align="left">25</td>
+<td align="left">19</td>
+<td align="left">EM (End of Medium)</td>
+<td align="left">已到介质末端/介质存储已满/介质中断</td>
+</tr>
+<tr>
+<td align="left">00011010</td>
+<td align="left">26</td>
+<td align="left">1A</td>
+<td align="left">SUB (Substitute)</td>
+<td align="left">替补/替换</td>
+</tr>
+<tr>
+<td align="left">00011011</td>
+<td align="left">27</td>
+<td align="left">1B</td>
+<td align="left">ESC (Escape)</td>
+<td align="left">逃离/取消</td>
+</tr>
+<tr>
+<td align="left">00011100</td>
+<td align="left">28</td>
+<td align="left">1C</td>
+<td align="left">FS (File Separator)</td>
+<td align="left">文件分割符</td>
+</tr>
+<tr>
+<td align="left">00011101</td>
+<td align="left">29</td>
+<td align="left">1D</td>
+<td align="left">GS (Group Separator)</td>
+<td align="left">组分隔符/分组符</td>
+</tr>
+<tr>
+<td align="left">00011110</td>
+<td align="left">30</td>
+<td align="left">1E</td>
+<td align="left">RS (Record Separator)</td>
+<td align="left">记录分离符</td>
+</tr>
+<tr>
+<td align="left">00011111</td>
+<td align="left">31</td>
+<td align="left">1F</td>
+<td align="left">US (Unit Separator)</td>
+<td align="left">单元分隔符</td>
+</tr>
+<tr>
+<td align="left">00100000</td>
+<td align="left">32</td>
+<td align="left">20</td>
+<td align="left">(Space)</td>
+<td align="left">空格</td>
+</tr>
+<tr>
+<td align="left">00100001</td>
+<td align="left">33</td>
+<td align="left">21</td>
+<td align="left">!</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100010</td>
+<td align="left">34</td>
+<td align="left">22</td>
+<td align="left">“</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100011</td>
+<td align="left">35</td>
+<td align="left">23</td>
+<td align="left">#</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100100</td>
+<td align="left">36</td>
+<td align="left">24</td>
+<td align="left">$</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100101</td>
+<td align="left">37</td>
+<td align="left">25</td>
+<td align="left">%</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100110</td>
+<td align="left">38</td>
+<td align="left">26</td>
+<td align="left">&amp;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00100111</td>
+<td align="left">39</td>
+<td align="left">27</td>
+<td align="left">‘</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101000</td>
+<td align="left">40</td>
+<td align="left">28</td>
+<td align="left">(</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101001</td>
+<td align="left">41</td>
+<td align="left">29</td>
+<td align="left">)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101010</td>
+<td align="left">42</td>
+<td align="left">2A</td>
+<td align="left">*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101011</td>
+<td align="left">43</td>
+<td align="left">2B</td>
+<td align="left">+</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101100</td>
+<td align="left">44</td>
+<td align="left">2C</td>
+<td align="left">,</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101101</td>
+<td align="left">45</td>
+<td align="left">2D</td>
+<td align="left">-</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101110</td>
+<td align="left">46</td>
+<td align="left">2E</td>
+<td align="left">.</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00101111</td>
+<td align="left">47</td>
+<td align="left">2F</td>
+<td align="left">/</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110000</td>
+<td align="left">48</td>
+<td align="left">30</td>
+<td align="left">0</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110001</td>
+<td align="left">49</td>
+<td align="left">31</td>
+<td align="left">1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110010</td>
+<td align="left">50</td>
+<td align="left">32</td>
+<td align="left">2</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110011</td>
+<td align="left">51</td>
+<td align="left">33</td>
+<td align="left">3</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110100</td>
+<td align="left">52</td>
+<td align="left">34</td>
+<td align="left">4</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110101</td>
+<td align="left">53</td>
+<td align="left">35</td>
+<td align="left">5</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110110</td>
+<td align="left">54</td>
+<td align="left">36</td>
+<td align="left">6</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00110111</td>
+<td align="left">55</td>
+<td align="left">37</td>
+<td align="left">7</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111000</td>
+<td align="left">56</td>
+<td align="left">38</td>
+<td align="left">8</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111001</td>
+<td align="left">57</td>
+<td align="left">39</td>
+<td align="left">9</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111010</td>
+<td align="left">58</td>
+<td align="left">3A</td>
+<td align="left">:</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111011</td>
+<td align="left">59</td>
+<td align="left">3B</td>
+<td align="left">;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111100</td>
+<td align="left">60</td>
+<td align="left">3C</td>
+<td align="left">&lt;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111101</td>
+<td align="left">61</td>
+<td align="left">3D</td>
+<td align="left">=</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111110</td>
+<td align="left">62</td>
+<td align="left">3E</td>
+<td align="left">&gt;</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">00111111</td>
+<td align="left">63</td>
+<td align="left">3F</td>
+<td align="left">?</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000000</td>
+<td align="left">64</td>
+<td align="left">40</td>
+<td align="left">@</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000001</td>
+<td align="left">65</td>
+<td align="left">41</td>
+<td align="left">A</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000010</td>
+<td align="left">66</td>
+<td align="left">42</td>
+<td align="left">B</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000011</td>
+<td align="left">67</td>
+<td align="left">43</td>
+<td align="left">C</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000100</td>
+<td align="left">68</td>
+<td align="left">44</td>
+<td align="left">D</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000101</td>
+<td align="left">69</td>
+<td align="left">45</td>
+<td align="left">E</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000110</td>
+<td align="left">70</td>
+<td align="left">46</td>
+<td align="left">F</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01000111</td>
+<td align="left">71</td>
+<td align="left">47</td>
+<td align="left">G</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001000</td>
+<td align="left">72</td>
+<td align="left">48</td>
+<td align="left">H</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001001</td>
+<td align="left">73</td>
+<td align="left">49</td>
+<td align="left">I</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001010</td>
+<td align="left">74</td>
+<td align="left">4A</td>
+<td align="left">J</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001011</td>
+<td align="left">75</td>
+<td align="left">4B</td>
+<td align="left">K</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001100</td>
+<td align="left">76</td>
+<td align="left">4C</td>
+<td align="left">L</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001101</td>
+<td align="left">77</td>
+<td align="left">4D</td>
+<td align="left">M</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001110</td>
+<td align="left">78</td>
+<td align="left">4E</td>
+<td align="left">N</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01001111</td>
+<td align="left">79</td>
+<td align="left">4F</td>
+<td align="left">O</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010000</td>
+<td align="left">80</td>
+<td align="left">50</td>
+<td align="left">P</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010001</td>
+<td align="left">81</td>
+<td align="left">51</td>
+<td align="left">Q</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010010</td>
+<td align="left">82</td>
+<td align="left">52</td>
+<td align="left">R</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010011</td>
+<td align="left">83</td>
+<td align="left">53</td>
+<td align="left">S</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010100</td>
+<td align="left">84</td>
+<td align="left">54</td>
+<td align="left">T</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010101</td>
+<td align="left">85</td>
+<td align="left">55</td>
+<td align="left">U</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010110</td>
+<td align="left">86</td>
+<td align="left">56</td>
+<td align="left">V</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01010111</td>
+<td align="left">87</td>
+<td align="left">57</td>
+<td align="left">W</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011000</td>
+<td align="left">88</td>
+<td align="left">58</td>
+<td align="left">X</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011001</td>
+<td align="left">89</td>
+<td align="left">59</td>
+<td align="left">Y</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011010</td>
+<td align="left">90</td>
+<td align="left">5A</td>
+<td align="left">Z</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011011</td>
+<td align="left">91</td>
+<td align="left">5B</td>
+<td align="left">[</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011100</td>
+<td align="left">92</td>
+<td align="left">5C</td>
+<td align="left">\</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011101</td>
+<td align="left">93</td>
+<td align="left">5D</td>
+<td align="left">]</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011110</td>
+<td align="left">94</td>
+<td align="left">5E</td>
+<td align="left">^</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01011111</td>
+<td align="left">95</td>
+<td align="left">5F</td>
+<td align="left">_</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100000</td>
+<td align="left">96</td>
+<td align="left">60</td>
+<td align="left">`</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100001</td>
+<td align="left">97</td>
+<td align="left">61</td>
+<td align="left">a</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100010</td>
+<td align="left">98</td>
+<td align="left">62</td>
+<td align="left">b</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100011</td>
+<td align="left">99</td>
+<td align="left">63</td>
+<td align="left">c</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100100</td>
+<td align="left">100</td>
+<td align="left">64</td>
+<td align="left">d</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100101</td>
+<td align="left">101</td>
+<td align="left">65</td>
+<td align="left">e</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100110</td>
+<td align="left">102</td>
+<td align="left">66</td>
+<td align="left">f</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01100111</td>
+<td align="left">103</td>
+<td align="left">67</td>
+<td align="left">g</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101000</td>
+<td align="left">104</td>
+<td align="left">68</td>
+<td align="left">h</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101001</td>
+<td align="left">105</td>
+<td align="left">69</td>
+<td align="left">i</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101010</td>
+<td align="left">106</td>
+<td align="left">6A</td>
+<td align="left">j</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101011</td>
+<td align="left">107</td>
+<td align="left">6B</td>
+<td align="left">k</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101100</td>
+<td align="left">108</td>
+<td align="left">6C</td>
+<td align="left">l</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101101</td>
+<td align="left">109</td>
+<td align="left">6D</td>
+<td align="left">m</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101110</td>
+<td align="left">110</td>
+<td align="left">6E</td>
+<td align="left">n</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01101111</td>
+<td align="left">111</td>
+<td align="left">6F</td>
+<td align="left">o</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110000</td>
+<td align="left">112</td>
+<td align="left">70</td>
+<td align="left">p</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110001</td>
+<td align="left">113</td>
+<td align="left">71</td>
+<td align="left">q</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110010</td>
+<td align="left">114</td>
+<td align="left">72</td>
+<td align="left">r</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110011</td>
+<td align="left">115</td>
+<td align="left">73</td>
+<td align="left">s</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110100</td>
+<td align="left">116</td>
+<td align="left">74</td>
+<td align="left">t</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110101</td>
+<td align="left">117</td>
+<td align="left">75</td>
+<td align="left">u</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110110</td>
+<td align="left">118</td>
+<td align="left">76</td>
+<td align="left">v</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01110111</td>
+<td align="left">119</td>
+<td align="left">77</td>
+<td align="left">w</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111000</td>
+<td align="left">120</td>
+<td align="left">78</td>
+<td align="left">x</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111001</td>
+<td align="left">121</td>
+<td align="left">79</td>
+<td align="left">y</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111010</td>
+<td align="left">122</td>
+<td align="left">7A</td>
+<td align="left">z</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111011</td>
+<td align="left">123</td>
+<td align="left">7B</td>
+<td align="left">{</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111100</td>
+<td align="left">124</td>
+<td align="left">7C</td>
+<td align="left">|</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111101</td>
+<td align="left">125</td>
+<td align="left">7D</td>
+<td align="left">}</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111110</td>
+<td align="left">126</td>
+<td align="left">7E</td>
+<td align="left">~</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">01111111</td>
+<td align="left">127</td>
+<td align="left">7F</td>
+<td align="left">DEL (Delete)</td>
+<td align="left">删除</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>知识点二：c中单引号和双引号的区别</p>
+<p>单引号中的字符是一个整数，对应ASCII表，而双引号不仅可以引单个字符，还可以引字符串。</p>
+</li>
+<li><p>python实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="built_in">input</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> s:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(c) <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>),<span class="built_in">ord</span>(<span class="string">&#x27;z&#x27;</span>)+<span class="number">1</span>):</span><br><span class="line">        c = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c)+<span class="number">4</span>-<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))%<span class="number">26</span>+<span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))</span><br><span class="line">        <span class="built_in">print</span>(c,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(c) <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>),<span class="built_in">ord</span>(<span class="string">&#x27;Z&#x27;</span>)+<span class="number">1</span>):</span><br><span class="line">        c = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c)+<span class="number">4</span>-<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))%<span class="number">26</span>+<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))</span><br><span class="line">        <span class="built_in">print</span>(c,end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="二，杭电2000"><a href="#二，杭电2000" class="headerlink" title="二，杭电2000"></a>二，杭电2000</h1><p>输入三个字符后，按各字符的ASCII码从小到大的顺序输出这三个字符。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" rel="tag"># 数据结构与算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/17/go-python%EF%BC%881%EF%BC%89/" rel="prev" title="go-python">
+      <i class="fa fa-chevron-left"></i> go-python
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%BF%E6%80%A7%E8%A1%A8/" rel="next" title="数据结构之线性表">
+      数据结构之线性表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%EF%BC%8CC%E8%AF%AD%E8%A8%80%E7%BD%91%E9%A2%98%E7%9B%AE1003"><span class="nav-number">1.</span> <span class="nav-text">一，C语言网题目1003</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%EF%BC%8C%E6%9D%AD%E7%94%B52000"><span class="nav-number">2.</span> <span class="nav-text">二，杭电2000</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">GuiYoung</p>
+  <div class="site-description" itemprop="description">十有九人堪白眼，百无一用是书生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuiYoung</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -27,17 +27,17 @@
 <meta property="og:site_name" content="Las Nubes">
 <meta property="og:description" content="Pingping用于确定本机是否能与另一台主机交换数据包，根据返回的信息，推断TCP&#x2F;IP参数设置是否正确，以及运行是否正常、网络是否通畅。ping发送接收的消息是报文（IP报文）。 ping的过程：  源主机发送”请求回显“（ping请求） 目标主机返回”回显应答“（ping请求） 源主机通过”回显应答“类型报文中的内容来判断是否能够正常连接  IP报文： IP协议并不可靠，不保证数据能否被成功">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185032171-662267624.png">
-<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185437832-1468675305.png">
-<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/5337919-d1900102224993c8.png">
-<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1-15110ZSA3309.jpg">
-<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1-15110ZT059560.jpg">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185032171-662267624.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185437832-1468675305.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C5337919-d1900102224993c8.png">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZSA3309.jpg">
+<meta property="og:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZT059560.jpg">
 <meta property="article:published_time" content="2021-09-12T06:47:03.000Z">
-<meta property="article:modified_time" content="2021-09-12T09:26:18.395Z">
+<meta property="article:modified_time" content="2021-09-16T11:30:49.125Z">
 <meta property="article:author" content="GuiYoung">
 <meta property="article:tag" content="network">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/09/12/ping-and-traceroute/blog2/hexo/source_posts/ping-and-traceroute/1931443-20200924185032171-662267624.png">
+<meta name="twitter:image" content="http://example.com/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185032171-662267624.png">
 
 <link rel="canonical" href="http://example.com/2021/09/12/ping-and-traceroute/">
 
@@ -184,10 +184,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-09-12 14:47:03 / Modified: 17:26:18" itemprop="dateCreated datePublished" datetime="2021-09-12T14:47:03+08:00">2021-09-12</time>
+              <time title="Created: 2021-09-12 14:47:03" itemprop="dateCreated datePublished" datetime="2021-09-12T14:47:03+08:00">2021-09-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-16 19:30:49" itemprop="dateModified" datetime="2021-09-16T19:30:49+08:00">2021-09-16</time>
+              </span>
 
           
 
@@ -210,10 +216,10 @@
 <p>IP报文：</p>
 <p>IP协议并不可靠，不保证数据能否被成功送达，由此引入ICMP（网络控制报文）协议。</p>
 <p>ICMP传递差错报文以及其它需要注意的信息，供IP层或更高层（TCP或UDP）使用。经常被认为是IP层的一部分。</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185032171-662267624.png" alt="1931443-20200924185032171-662267624"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185032171-662267624.png" alt="1931443-20200924185032171-662267624"></p>
 <p>ICMP报文类型有多种，根据type和code来判断ICMP报文类型。</p>
 <p>ICMP报文 = ICMP报头+Data（(ICMP_Packet = ICMPHeader + Data)）</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1931443-20200924185437832-1468675305.png" alt="1931443-20200924185437832-1468675305"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1931443-20200924185437832-1468675305.png" alt="1931443-20200924185437832-1468675305"></p>
 <ul>
 <li>type和code</li>
 </ul>
@@ -483,7 +489,7 @@
 <ul>
 <li><p>原理：</p>
 <p>源主机发送一份TTL字段为n的IP数据给某个主机，就可以得到该主机的IP地址，我们让TTL字段从1开始依次递增，就可以得到源主机与目标主机之间所有的路由器的IP地址。当一个路由器收到一个IP数据报，若其TTL为1，那么该数据报在网络空间中的生存周期已经结束，这时，若收到该数据报的主机不是目标主机，那么该主机就会返回一份ICMP超时报文（包含该主机IP地址）；若在TTL&gt;=1的情况下到达目标主机，目标主机就会返回一份ICMP应答报文。</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\5337919-d1900102224993c8.png"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C5337919-d1900102224993c8.png"></p>
 </li>
 <li><p>Timeout：</p>
 <p>设置该参数的意义在于应对发出消息后消息丢失一直不会返回的情况，避免因为消息没有返回而一直等待下去。</p>
@@ -516,9 +522,9 @@
 </ul>
 <p>例子（0x12345678）：</p>
 <p>大端序：</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZSA3309.jpg" alt="大端序"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZSA3309.jpg" alt="大端序"></p>
 <p>小端序：</p>
-<p><img src="/2021/09/12/ping-and-traceroute/blog2\hexo\source_posts\ping-and-traceroute\1-15110ZT059560.jpg"></p>
+<p><img src="/2021/09/12/ping-and-traceroute/ping-and-traceroute%5C1-15110ZT059560.jpg"></p>
 <p>网路字节序统一为大端序。</p>
 
     </div>
@@ -617,14 +623,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
