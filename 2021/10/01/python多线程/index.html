@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="线程对象：threading.Threadthreading.Thread(group&#x3D;None, target&#x3D;None, name&#x3D;None, args&#x3D;(), kwargs&#x3D;{}, *, daemon&#x3D;None)  traget：该线程要调用的函数 args：该线程要传入的参数，元组形式，默认为空元组，可以和kwargs一起使用 kwargs：该线程要传入的参数，字典形式  方法：  sar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python多线程">
+<meta property="og:url" content="http://example.com/2021/10/01/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Las Nubes">
+<meta property="og:description" content="线程对象：threading.Threadthreading.Thread(group&#x3D;None, target&#x3D;None, name&#x3D;None, args&#x3D;(), kwargs&#x3D;{}, *, daemon&#x3D;None)  traget：该线程要调用的函数 args：该线程要传入的参数，元组形式，默认为空元组，可以和kwargs一起使用 kwargs：该线程要传入的参数，字典形式  方法：  sar">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-10-01T12:28:16.000Z">
+<meta property="article:modified_time" content="2021-10-02T03:25:00.728Z">
+<meta property="article:author" content="GuiYoung">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/10/01/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>python多线程 | Las Nubes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Las Nubes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/01/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GuiYoung">
+      <meta itemprop="description" content="十有九人堪白眼，百无一用是书生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Las Nubes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python多线程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-01 20:28:16" itemprop="dateCreated datePublished" datetime="2021-10-01T20:28:16+08:00">2021-10-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-10-02 11:25:00" itemprop="dateModified" datetime="2021-10-02T11:25:00+08:00">2021-10-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="线程对象：threading-Thread"><a href="#线程对象：threading-Thread" class="headerlink" title="线程对象：threading.Thread"></a>线程对象：threading.Thread</h1><p>threading.Thread(group=None, target=None, name=None, args=(), kwargs={}, *, daemon=None)</p>
+<ul>
+<li>traget：该线程要调用的函数</li>
+<li>args：该线程要传入的参数，元组形式，默认为空元组，可以和kwargs一起使用</li>
+<li>kwargs：该线程要传入的参数，字典形式</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li><p>sart()：开启一个线程，使run()方法在一个线程中被调用</p>
+</li>
+<li><p>run()：主要用去创建子类时重写</p>
+</li>
+<li><p>join()：确保调用该方法的线程执行完之后再执行下一个线程</p>
+</li>
+<li><p>is_alive()：判断该线程是否存活</p>
+</li>
+<li><p>daemon()：判断该线程是否是守护线程。所有在主线程中创建的线程默认都是非守护线程。</p>
+</li>
+</ul>
+<p>补充：</p>
+<ul>
+<li>守护线程：只有当所有守护线程都结束，python程序才会退出。若python程序退出，那么所有的守护线程都会被终止，从而结束程序</li>
+<li>非守护线程：当python程序结束时，若还有非守护线程在运行，那么会等到所有非守护线程结束才会退出</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">通过继承threading.Thread的子类创建线程</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestThread</span>(<span class="params">threading.Thread</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, para=<span class="string">&#x27;hi&#x27;</span>, sleep=<span class="number">3</span></span>):</span></span><br><span class="line">        <span class="comment"># 重写threading.Thread的__init__方法时，确保在所有操作之前先调用threading.Thread.__init__方法</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.para = para</span><br><span class="line">        self.sleep = sleep</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;线程内容&quot;&quot;&quot;</span></span><br><span class="line">        time.sleep(self.sleep)</span><br><span class="line">        <span class="built_in">print</span>(self.para)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="comment"># 创建线程</span></span><br><span class="line">    thread_hi = TestThread()</span><br><span class="line">    thread_hello = TestThread(<span class="string">&#x27;hello&#x27;</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 启动线程</span></span><br><span class="line">    thread_hi.start()</span><br><span class="line">    thread_hello.start()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Main thread has ended!&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">使用join方法阻塞主线程</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_thread</span>(<span class="params">para=<span class="string">&#x27;hi&#x27;</span>, sleep=<span class="number">5</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;线程运行函数&quot;&quot;&quot;</span></span><br><span class="line">    time.sleep(sleep)</span><br><span class="line">    <span class="built_in">print</span>(para)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="comment"># 创建线程</span></span><br><span class="line">    thread_hi = threading.Thread(target=test_thread)</span><br><span class="line">    thread_hello = threading.Thread(target=test_thread, args=(<span class="string">&#x27;hello&#x27;</span>, <span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 启动线程</span></span><br><span class="line">    thread_hi.start()</span><br><span class="line">    thread_hello.start()</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;马上执行join方法了&#x27;</span>)</span><br><span class="line">    <span class="comment"># 执行join方法会阻塞调用线程（主线程），直到调用join方法的线程（thread_hi）结束</span></span><br><span class="line">    thread_hi.join()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;线程thread_hi已结束&#x27;</span>)</span><br><span class="line">    <span class="comment"># 这里不会阻塞主线程，因为运行到这里的时候，线程thread_hello已经运行结束了</span></span><br><span class="line">    thread_hello.join()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Main thread has ended!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 以上代码只是为了展示join方法的效果</span></span><br><span class="line">    <span class="comment"># 如果想要等所有线程都运行完成后再做其他操作，可以使用for循环</span></span><br><span class="line">    <span class="comment"># for thd in (thread_hi, thread_hello):</span></span><br><span class="line">    <span class="comment">#     thd.join()</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># print(&#x27;所有线程执行结束后的其他操作&#x27;)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><ul>
+<li>锁只有锁定与非锁定两种状态</li>
+<li>当一个锁被锁定时，它并不属于某一个线程</li>
+<li>锁被创建时，处于非锁定状态，使用acquire()方法来锁定锁；一个锁定的锁无法再次获得</li>
+<li>使用release()来释放一个锁，不只是获得锁的线程可以释放锁</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">使用锁实现线程同步</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建锁</span></span><br><span class="line">lock = threading.Lock()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 全局变量</span></span><br><span class="line">global_resource = [<span class="literal">None</span>] * <span class="number">5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_resource</span>(<span class="params">para, sleep</span>):</span></span><br><span class="line">    <span class="comment"># 请求锁</span></span><br><span class="line">    lock.acquire()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这段代码如果不加锁，第一个线程运行结束后global_resource中是乱的，输出为：修改全局变量为： [&#x27;hello&#x27;, &#x27;hi&#x27;, &#x27;hi&#x27;, &#x27;hello&#x27;, &#x27;hello&#x27;]</span></span><br><span class="line">    <span class="comment"># 第二个线程运行结束后，global_resource中还是乱的，输出为：修改全局变量为： [&#x27;hello&#x27;, &#x27;hi&#x27;, &#x27;hi&#x27;, &#x27;hi&#x27;, &#x27;hi&#x27;]</span></span><br><span class="line">    <span class="comment"># 若想在函数内部对函数外的变量进行操作，就需要在函数内部声明其为global</span></span><br><span class="line">    <span class="keyword">global</span> global_resource</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(global_resource)):</span><br><span class="line">        global_resource[i] = para</span><br><span class="line">        time.sleep(sleep)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;修改全局变量为：&quot;</span>, global_resource)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 释放锁</span></span><br><span class="line">    lock.release()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    thread_hi = threading.Thread(target=change_resource, args=(<span class="string">&#x27;hi&#x27;</span>, <span class="number">2</span>))</span><br><span class="line">    thread_hello = threading.Thread(target=change_resource, args=(<span class="string">&#x27;hello&#x27;</span>, <span class="number">1</span>))</span><br><span class="line">    thread_hi.start()</span><br><span class="line">    thread_hello.start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<h1 id="递归锁"><a href="#递归锁" class="headerlink" title="递归锁"></a>递归锁</h1><ul>
+<li>释放递归锁的操作必须由获得该锁的线程来进行（同一递归等级）</li>
+<li>同一个线程在释放锁之前再次获得锁不会阻塞该线程，而是将递归等级加一（初始递归等级为1）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">在普通锁中可能造成死锁的情况，可以考虑使用递归锁解决</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是使用的两个普通锁，那么就会造成死锁的情况，程序一直阻塞而不会退出</span></span><br><span class="line"><span class="comment"># rlock_hi = threading.Lock()</span></span><br><span class="line"><span class="comment"># rlock_hello = threading.Lock()</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用成一个递归锁就可以解决当前这种死锁情况</span></span><br><span class="line">rlock_hi = rlock_hello = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_thread_hi</span>():</span></span><br><span class="line">    <span class="comment"># 初始时锁内部的递归等级为1</span></span><br><span class="line">    rlock_hi.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;线程test_thread_hi获得了锁rlock_hi&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 如果再次获取同样一把锁，则不会阻塞，只是内部的递归等级加1</span></span><br><span class="line">    rlock_hello.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;线程test_thread_hi获得了锁rlock_hello&#x27;</span>)</span><br><span class="line">    <span class="comment"># 释放一次锁，内部递归等级减1</span></span><br><span class="line">    rlock_hello.release()</span><br><span class="line">    <span class="comment"># 这里再次减，当递归等级为0时，其他线程才可获取到此锁</span></span><br><span class="line">    rlock_hi.release()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_thread_hello</span>():</span></span><br><span class="line">    rlock_hello.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;线程test_thread_hello获得了锁rlock_hello&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    rlock_hi.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;线程test_thread_hello获得了锁rlock_hi&#x27;</span>)</span><br><span class="line">    rlock_hi.release()</span><br><span class="line">    rlock_hello.release()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    thread_hi = threading.Thread(target=test_thread_hi)</span><br><span class="line">    thread_hello = threading.Thread(target=test_thread_hello)</span><br><span class="line">    thread_hi.start()</span><br><span class="line">    thread_hello.start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<h1 id="条件变量对象"><a href="#条件变量对象" class="headerlink" title="条件变量对象"></a>条件变量对象</h1><p>补充：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="literal">True</span> == <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="literal">True</span> == <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="literal">False</span> == <span class="number">0</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="literal">False</span> == <span class="number">2</span>)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>threading.Condition(lock=None)：一个条件变量对象允许一个或多个线程等待，直到被另一个线程通知    </p>
+<p>方法：</p>
+<ul>
+<li>wait(timeout=None)：释放锁，等待直到被通知或超时，等待的时间内阻塞线程。</li>
+<li>wait_for(predicate,timeout=None)：与wait方法类似，等待。这个方法首先调用predicate函数，判断其返回值，若为true，释放锁，并阻塞，待被通知或超时后，调用predicate函数，返回true，则获得锁，不再阻塞；若为false，继续阻塞；若为false，则不会释放锁，程序继续执行。</li>
+<li>notify(n=1)：唤醒n个正在等待这个条件变量的线程</li>
+<li>notify_all()：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">让一个线程等待，直到另一个线程通知</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建条件变量对象</span></span><br><span class="line">condition_lock = threading.Condition()</span><br><span class="line"></span><br><span class="line">PRE = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># predicate可调用函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pre</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(PRE)</span><br><span class="line">    <span class="keyword">return</span> PRE</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_thread_hi</span>():</span></span><br><span class="line">    <span class="comment"># 在使用wait/wait_for之前必须先获得锁</span></span><br><span class="line">    condition_lock.acquire()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;等待线程test_thread_hello的通知&#x27;</span>)</span><br><span class="line">    <span class="comment"># 先执行一次pre，返回False后释放掉锁，等另一个线程释放掉锁后再次执行pre，返回True后再次获取锁</span></span><br><span class="line">    <span class="comment"># wait_for的返回值不是True和False，而是predicate参数的返回值</span></span><br><span class="line">    condition_lock.wait_for(pre)</span><br><span class="line">    <span class="comment"># condition_lock.wait()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;继续执行&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 不要忘记使用wait/wait_for之后要释放锁</span></span><br><span class="line">    condition_lock.release()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_thread_hello</span>():</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    condition_lock.acquire()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> PRE</span><br><span class="line">    PRE = <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;修改PRE值为1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;通知线程test_thread_hi可以准备获取锁了&#x27;</span>)</span><br><span class="line">    condition_lock.notify()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 先notify/notify_all之后在释放锁</span></span><br><span class="line">    condition_lock.release()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;你获取锁吧&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    thread_hi = threading.Thread(target=test_thread_hi)</span><br><span class="line">    thread_hello = threading.Thread(target=test_thread_hello)</span><br><span class="line">    thread_hi.start()</span><br><span class="line">    thread_hello.start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/27/go-1/" rel="prev" title="go(1)">
+      <i class="fa fa-chevron-left"></i> go(1)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/10/02/python%E7%94%9F%E6%88%90%E5%99%A8%E5%92%8C%E8%BF%AD%E4%BB%A3%E5%99%A8/" rel="next" title="python生成器和迭代器">
+      python生成器和迭代器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AF%B9%E8%B1%A1%EF%BC%9Athreading-Thread"><span class="nav-number">1.</span> <span class="nav-text">线程对象：threading.Thread</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E9%94%81"><span class="nav-number">3.</span> <span class="nav-text">递归锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.</span> <span class="nav-text">条件变量对象</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">GuiYoung</p>
+  <div class="site-description" itemprop="description">十有九人堪白眼，百无一用是书生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuiYoung</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
